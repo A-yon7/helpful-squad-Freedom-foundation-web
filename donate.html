@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Helpful Squad & Freedom Foundation - আপনার সাহায্যের হাত বাড়িয়ে দিন।">
+    <title>ডোনেট করুন | Helpful Squad & Freedom Foundation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF5733;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .bg-orange-theme {
+            background-color: var(--primary);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .donation-card {
+            transition: all 0.3s ease;
+            border-radius: 2rem;
+            background: white;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .donation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script src="app-data.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+    <nav
+        class="sticky top-0 z-50 glass-nav border-b border-gray-100 py-4 px-6 flex justify-between items-center transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3">
+                <div
+                    class="bg-orange-theme text-white p-2.5 rounded-xl font-bold text-xl shadow-lg shadow-orange-500/30">
+                    HS & FF</div>
+                <span class="hidden lg:block font-bold text-gray-800 tracking-tight">Helpful Squad & <span
+                        class="text-orange-500">Freedom Foundation</span></span>
+            </a>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <div class="flex space-x-8 font-semibold text-gray-600">
+                <a href="index.html" class="hover:text-orange-500 transition-colors">হোম</a>
+                <a href="about.html" class="hover:text-orange-500 transition-colors">আমাদের লক্ষ্য</a>
+                <a href="gallery.html" class="hover:text-orange-500 transition-colors">গ্যালারি</a>
+                <a href="members.html" class="hover:text-orange-500 transition-colors">সদস্য</a>
+                <a href="complaints.html" class="hover:text-orange-500 transition-colors">অভিযোগ</a>
+            </div>
+            <a href="donate.html"
+                class="bg-orange-theme text-white px-6 py-2.5 rounded-full font-bold hover:bg-orange-600 shadow-lg transition-all">ডোনেট
+                করুন</a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-2xl text-gray-800 focus:outline-none"><i
+                class="fas fa-bars"></i></button>
+        <div id="mobile-menu"
+            class="fixed inset-0 bg-white z-[100] translate-x-full transition-transform duration-300 md:hidden p-8 flex flex-col uppercase font-bold tracking-widest text-lg">
+            <div class="flex justify-between items-center mb-12">
+                <div class="bg-orange-theme text-white p-2 rounded-lg font-bold">HS & FF</div>
+                <button id="close-menu-btn" class="text-3xl text-gray-800">&times;</button>
+            </div>
+            <a href="index.html" class="py-4 border-b">হোম</a>
+            <a href="about.html" class="py-4 border-b">আমাদের লক্ষ্য</a>
+            <a href="gallery.html" class="py-4 border-b">গ্যালারি</a>
+            <a href="members.html" class="py-4 border-b">সদস্য</a>
+            <a href="complaints.html" class="py-4 border-b">অভিযোগ</a>
+            <a href="donate.html"
+                class="bg-orange-theme text-white py-4 rounded-2xl text-center mt-8 text-orange-500">ডোনেট করুন</a>
+        </div>
+    </nav>
+
+    <header class="py-24 bg-orange-theme text-white text-center">
+        <h1 class="text-5xl font-extrabold mb-4 fade-in-up">মানবতার পাশে দাঁড়ান</h1>
+        <p class="text-xl opacity-90 max-w-2xl mx-auto fade-in-up">আপনার সামান্য সাহায্য কারো বড় স্বপ্ন পূরণ করতে পারে।
+        </p>
+    </header>
+
+    <main class="py-20 px-6 max-w-5xl mx-auto">
+        <div class="text-center mb-16 fade-in-up">
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">অনুদানের মাধ্যমসমূহ</h2>
+            <p class="text-gray-600 text-lg">নিচের যেকোনো মাধ্যমে আপনি আপনার অনুদান পাঠাতে পারেন।</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in-up">
+            <div class="donation-card border-b-8 border-pink-500">
+                <p class="font-bold text-pink-600 text-lg mb-4 text-center">Bkash (Personal)</p>
+                <p class="text-2xl font-mono font-bold tracking-tight text-center text-gray-800">01X-XXXX-XXXX</p>
+            </div>
+            <div class="donation-card border-b-8 border-orange-500">
+                <p class="font-bold text-orange-600 text-lg mb-4 text-center">Nagad (Personal)</p>
+                <p class="text-2xl font-mono font-bold tracking-tight text-center text-gray-800">01X-XXXX-XXXX</p>
+            </div>
+            <div class="donation-card border-b-8 border-purple-600">
+                <p class="font-bold text-purple-600 text-lg mb-4 text-center">Rocket (Personal)</p>
+                <p class="text-2xl font-mono font-bold tracking-tight text-center text-gray-800">01X-XXXX-XXXX</p>
+            </div>
+        </div>
+
+        <div class="mt-20 text-center fade-in-up">
+            <h3 class="text-2xl font-bold mb-8 text-gray-800">কোনো তথ্যের জন্য সরাসরি যোগাযোগ করুন</h3>
+            <a href="https://wa.me/8801XXXXXXXXX?text=আসসালামু আলাইকুম, আমি আপনাদের মাধ্যমে অনুদান প্রদানের ব্যাপারে কিছু জানতে চাই।"
+                target="_blank"
+                class="inline-flex items-center gap-4 bg-[#25D366] text-white px-10 py-5 rounded-2xl font-bold hover:bg-[#128C7E] shadow-xl transition-all">
+                <i class="fab fa-whatsapp text-2xl"></i>
+                হোয়াটসঅ্যাপ করুন
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-[#111] text-white py-20 px-6 mt-20">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 justify-between items-center gap-12">
+            <div class="text-center md:text-left">
+                <h3 class="text-3xl font-bold text-orange-500 mb-4">Helpful Squad & <br>Freedom Foundation</h3>
+                <p class="text-gray-400 text-lg">মানবতার সেবায় একতাবদ্ধ এক পরিবার। আমরা আছি আপনার এবং অসহায় মানুষের
+                    পাশে।</p>
+                <div class="mt-8 flex justify-center md:justify-start space-x-4">
+                    <a href="https://wa.me/8801XXXXXXXXX?text=আসসালামু আলাইকুম, আমি আপনাদের সংগঠনের ব্যাপারে কিছু জানতে চাই।"
+                        target="_blank"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#25D366] hover:border-[#25D366] transition-all text-xl">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61565027703932" target="_blank"
+                        title="Helpful Squad Facebook Page"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2] transition-all text-xl">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://facebook.com/groups/1434791237187459/" target="_blank"
+                        title="Freedom Foundation Facebook Group"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2] transition-all text-xl">
+                        <i class="fas fa-users"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col items-center md:items-end gap-6 text-center md:text-right">
+                <div
+                    class="flex flex-wrap justify-center md:justify-end gap-6 text-gray-400 font-bold uppercase text-sm tracking-widest">
+                    <a href="index.html" class="hover:text-orange-500 transition-all">হোম</a>
+                    <a href="about.html" class="hover:text-orange-500 transition-all">আমাদের লক্ষ্য</a>
+                    <a href="gallery.html" class="hover:text-orange-500 transition-all">গ্যালারি</a>
+                    <a href="members.html" class="hover:text-orange-500 transition-all">সদস্য</a>
+                    <a href="complaints.html" class="hover:text-orange-500 transition-all">অভিযোগ</a>
+                    <a href="admin.html" class="hover:text-orange-500 transition-all">অ্যাডমিন</a>
+                </div>
+                <p class="text-gray-500 font-medium">© 2026 Helpful Squad & Freedom Foundation. <br class="md:hidden">
+                    All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('translate-x-full'));
+        closeMenuBtn.addEventListener('click', () => mobileMenu.classList.add('translate-x-full'));
+
+        // Auto Load from Database
+        window.addEventListener('DOMContentLoaded', async () => {
+            await AppData.loadFromCloud();
+        });
+    </script>
+</body>
+
+</html>

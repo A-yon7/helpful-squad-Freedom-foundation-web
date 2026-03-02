@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Helpful Squad & Freedom Foundation - আমাদের সদস্য তালিকা।">
+    <title>সদস্য ভেরিফিকেশন | Helpful Squad & Freedom Foundation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF5733;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .bg-orange-theme {
+            background-color: var(--primary);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .member-card {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+    <nav
+        class="sticky top-0 z-50 glass-nav border-b border-gray-100 py-4 px-6 flex justify-between items-center transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3">
+                <div
+                    class="bg-orange-theme text-white p-2.5 rounded-xl font-bold text-xl shadow-lg shadow-orange-500/30">
+                    HS & FF</div>
+                <span class="hidden lg:block font-bold text-gray-800 tracking-tight">Helpful Squad & <span
+                        class="text-orange-500">Freedom Foundation</span></span>
+            </a>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <div class="flex space-x-8 font-semibold text-gray-600">
+                <a href="index.html" class="hover:text-orange-500 transition-colors">হোম</a>
+                <a href="about.html" class="hover:text-orange-500 transition-colors">আমাদের লক্ষ্য</a>
+                <a href="gallery.html" class="hover:text-orange-500 transition-colors">গ্যালারি</a>
+                <a href="members.html" class="text-orange-500 font-bold">সদস্য</a>
+                <a href="complaints.html" class="hover:text-orange-500 transition-colors">অভিযোগ</a>
+            </div>
+            <a href="donate.html"
+                class="bg-orange-theme text-white px-6 py-2.5 rounded-full font-bold hover:bg-orange-600 shadow-lg transition-all">ডোনেট
+                করুন</a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-2xl text-gray-800 focus:outline-none"><i
+                class="fas fa-bars"></i></button>
+        <div id="mobile-menu"
+            class="fixed inset-0 bg-white z-[100] translate-x-full transition-transform duration-300 md:hidden p-8 flex flex-col uppercase font-bold tracking-widest text-lg">
+            <div class="flex justify-between items-center mb-12">
+                <div class="bg-orange-theme text-white p-2 rounded-lg font-bold">HS & FF</div>
+                <button id="close-menu-btn" class="text-3xl text-gray-800">&times;</button>
+            </div>
+            <a href="index.html" class="py-4 border-b">হোম</a>
+            <a href="about.html" class="py-4 border-b">আমাদের লক্ষ্য</a>
+            <a href="gallery.html" class="py-4 border-b">গ্যালারি</a>
+            <a href="members.html" class="py-4 border-b text-orange-500">সদস্য</a>
+            <a href="complaints.html" class="py-4 border-b">অভিযোগ</a>
+            <a href="donate.html" class="bg-orange-theme text-white py-4 rounded-2xl text-center mt-8">ডোনেট করুন</a>
+        </div>
+    </nav>
+
+    <header class="py-20 bg-gray-900 text-white text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 fade-in-up">সদস্য ভেরিফিকেশন</h1>
+        <p class="text-lg opacity-70 max-w-2xl mx-auto fade-in-up px-4">আইডি নম্বর অথবা নাম দিয়ে আমাদের সংগঠনের সদস্যদের
+            তথ্য যাচাই করুন।</p>
+    </header>
+
+    <main class="py-16 px-6 max-w-4xl mx-auto text-center">
+        <div class="mb-12 fade-in-up">
+            <div class="relative max-w-md mx-auto">
+                <input type="text" id="searchInput" placeholder="সদস্য আইডি বা নাম লিখুন "
+                    class="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-orange-500 outline-none transition-all pr-12 text-lg shadow-sm">
+                <button onclick="searchMember()"
+                    class="absolute right-3 top-3 bg-orange-theme text-white p-2.5 rounded-xl hover:bg-orange-600 transition-all shadow-md">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <p id="errorMsg" class="text-red-500 mt-4 hidden">দুঃখিত, এই তথ্য দিয়ে কোনো সদস্য পাওয়া যায়নি।</p>
+        </div>
+
+        <!-- Member Result Card -->
+        <div id="memberResult"
+            class="member-card max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 fade-in-up">
+            <div class="h-32 bg-orange-theme"></div>
+            <div class="px-8 pb-8 -mt-16 text-center">
+                <div class="relative inline-block mb-4">
+                    <img id="mPic" src="" alt="Member"
+                        class="w-32 h-32 rounded-3xl object-cover border-4 border-white shadow-xl bg-gray-200">
+                    <div id="mStatus"
+                        class="absolute -bottom-2 -right-2 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-bold border-2 border-white">
+                        Active</div>
+                </div>
+                <h3 id="mName" class="text-2xl font-bold text-gray-900 mb-1">সদস্যের নাম</h3>
+                <p id="mId" class="text-orange-500 font-bold text-sm mb-4 tracking-widest uppercase">ID: HS-XXXX</p>
+
+                <div class="grid grid-cols-1 gap-3 text-left">
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-gray-400 text-xs uppercase font-bold mb-1">পদবী / Position</p>
+                        <p id="mPosition" class="text-gray-800 font-bold">ভলান্টিয়ার</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-gray-400 text-xs uppercase font-bold mb-1">যোগদানের তারিখ</p>
+                        <p id="mDate" class="text-gray-800 font-bold">জানুয়ারি ২০২৪</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#111] text-white py-20 px-6 mt-20">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 justify-between items-center gap-12">
+            <div class="text-center md:text-left">
+                <h3 class="text-3xl font-bold text-orange-500 mb-4">Helpful Squad & <br>Freedom Foundation</h3>
+                <p class="text-gray-400 text-lg">মানবতার সেবায় একতাবদ্ধ এক পরিবার। আমরা আছি আপনার এবং অসহায় মানুষের
+                    পাশে।</p>
+                <div class="mt-8 flex justify-center md:justify-start space-x-4">
+                    <a href="https://wa.me/8801XXXXXXXXX?text=আসসালামু আলাইকুম, আমি আপনাদের সংগঠনের ব্যাপারে কিছু জানতে চাই।"
+                        target="_blank"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#25D366] hover:border-[#25D366] transition-all text-xl">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61565027703932" target="_blank"
+                        title="Helpful Squad Facebook Page"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2] transition-all text-xl">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://facebook.com/groups/1434791237187459/" target="_blank"
+                        title="Freedom Foundation Facebook Group"
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2] transition-all text-xl">
+                        <i class="fas fa-users"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col items-center md:items-end gap-6 text-center md:text-right">
+                <div
+                    class="flex flex-wrap justify-center md:justify-end gap-6 text-gray-400 font-bold uppercase text-sm tracking-widest">
+                    <a href="index.html" class="hover:text-orange-500 transition-all">হোম</a>
+                    <a href="about.html" class="hover:text-orange-500 transition-all">আমাদের লক্ষ্য</a>
+                    <a href="gallery.html" class="hover:text-orange-500 transition-all">গ্যালারি</a>
+                    <a href="members.html" class="hover:text-orange-500 transition-all">সদস্য</a>
+                    <a href="complaints.html" class="hover:text-orange-500 transition-all">অভিযোগ</a>
+                    <a href="admin.html" class="hover:text-orange-500 transition-all">অ্যাডমিন</a>
+                </div>
+                <p class="text-gray-500 font-medium">© 2026 Helpful Squad & Freedom Foundation. <br class="md:hidden">
+                    All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('translate-x-full'));
+        closeMenuBtn.addEventListener('click', () => mobileMenu.classList.add('translate-x-full'));
+    </script>
+
+    <script src="app-data.js"></script>
+    <script>
+        function searchMember() {
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultCard = document.getElementById('memberResult');
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (input === "") return;
+
+            const members = AppData.get('members');
+            const member = members.find(m =>
+                m.id.toLowerCase() === input ||
+                m.name.toLowerCase().includes(input)
+            );
+
+            if (member) {
+                document.getElementById('mName').innerText = member.name;
+                document.getElementById('mId').innerText = "ID: " + member.id;
+                document.getElementById('mPosition').innerText = member.position;
+                document.getElementById('mDate').innerText = member.date;
+                document.getElementById('mPic').src = member.pic;
+
+                resultCard.style.display = 'block';
+                errorMsg.classList.add('hidden');
+            } else {
+                resultCard.style.display = 'none';
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Allow 'Enter' key to search
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchMember();
+            }
+        });
+
+        // Close menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        });
+
+        // Auto Load from Database
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (AppData.getRemoteUrl()) {
+                await AppData.loadFromCloud();
+            }
+        });
+    </script>
+</body>
+
+</html>
