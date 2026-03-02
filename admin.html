@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | HS & FF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF5733;
+            --primary-dark: #E64A19;
+            --charcoal: #1A1A1A;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', 'Outfit', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .bg-orange-theme {
+            background-color: var(--primary);
+        }
+
+        .text-orange-theme {
+            color: var(--primary);
+        }
+
+        .border-orange-theme {
+            border-color: var(--primary);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-link.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(255, 87, 51, 0.3);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 antialiased">
+
+    <!-- Login Section -->
+    <div id="login-section" class="fixed inset-0 z-[100] bg-gray-900 flex items-center justify-center p-6">
+        <div class="w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden p-10 fade-in">
+            <div class="text-center mb-10">
+                <div
+                    class="inline-block bg-orange-theme text-white p-4 rounded-2xl font-bold text-2xl shadow-xl shadow-orange-500/30 mb-6">
+                    HS & FF
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">অ্যাডমিন প্যানেল</h1>
+                <p class="text-gray-500">আপনার তথ্য দিয়ে লগইন করুন</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 ml-1">ইউজারনেম</label>
+                    <input type="text" id="username"
+                        class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all outline-none"
+                        placeholder="Username" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 ml-1">পাসওয়ার্ড</label>
+                    <input type="password" id="password"
+                        class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all outline-none"
+                        placeholder="••••••••" required>
+                </div>
+                <button type="submit"
+                    class="w-full bg-orange-theme text-white py-4 rounded-xl font-bold text-lg hover:bg-orange-600 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/30">
+                    লগইন করুন
+                </button>
+            </form>
+            <div class="text-center mt-6">
+                <button onclick="toggleRecovery(true)" class="text-orange-500 font-semibold hover:underline">পাসওয়ার্ড
+                    ভুলে গেছেন?</button>
+            </div>
+            <p id="login-error" class="text-red-500 text-center mt-4 text-sm hidden">ভুল ইউজারনেম বা পাসওয়ার্ড!</p>
+        </div>
+
+        <!-- Password Recovery Box -->
+        <div id="recovery-box"
+            class="w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden p-10 fade-in hidden">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">পাসওয়ার্ড রিসেট</h2>
+                <p class="text-gray-500 text-sm">আপনার রিকভারি ইমেইলটি দিন</p>
+            </div>
+            <div class="space-y-6">
+                <input type="email" id="recovery-email-input"
+                    class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white outline-none"
+                    placeholder="email@example.com">
+                <button onclick="handleRecovery()"
+                    class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold">ভেরিফাই করুন</button>
+                <button onclick="toggleRecovery(false)" class="w-full text-gray-500 font-semibold">ফিরে যান</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-white border-r border-gray-100 flex flex-col fixed inset-y-0 left-0 z-50">
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-10">
+                    <div class="bg-orange-theme text-white p-2.5 rounded-xl font-bold text-lg">HS & FF</div>
+                    <span class="font-bold text-gray-900 tracking-tight">অ্যাডমিন ড্যাশবোর্ড</span>
+                </div>
+
+                <nav class="space-y-2">
+                    <button onclick="showTab('overview')"
+                        class="tab-btn sidebar-link active w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group"
+                        data-tab="overview">
+                        <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100"></i>
+                        ওভারভিউ
+                    </button>
+                    <button onclick="showTab('gallery')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="gallery">
+                        <i class="fas fa-images text-xl opacity-70 group-hover:opacity-100"></i>
+                        গ্যালারি
+                    </button>
+                    <button onclick="showTab('members')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="members">
+                        <i class="fas fa-users text-xl opacity-70 group-hover:opacity-100"></i>
+                        সদস্যগণ
+                    </button>
+                    <button onclick="showTab('donations')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="donations">
+                        <i class="fas fa-hand-holding-heart text-xl opacity-70 group-hover:opacity-100"></i>
+                        অনুদান
+                    </button>
+                    <button onclick="showTab('projects')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="projects">
+                        <i class="fas fa-tasks text-xl opacity-70 group-hover:opacity-100"></i>
+                        প্রজেক্ট প্রগ্রেস
+                    </button>
+                    <button onclick="showTab('db-settings')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="db-settings">
+                        <i class="fas fa-database text-xl opacity-70 group-hover:opacity-100"></i>
+                        ডাটাবেস
+                    </button>
+                    <button onclick="showTab('admin-settings')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="admin-settings">
+                        <i class="fas fa-user-shield text-xl opacity-70 group-hover:opacity-100"></i>
+                        অ্যাডমিন সেটিংস
+                    </button>
+                    <button onclick="showTab('complaints')"
+                        class="tab-btn sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold transition-all group text-gray-500 hover:bg-gray-50"
+                        data-tab="complaints">
+                        <i class="fas fa-envelope-open-text text-xl opacity-70 group-hover:opacity-100"></i>
+                        অভিযোগ বক্স
+                    </button>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-8 border-t border-gray-50">
+                <button onclick="logout()"
+                    class="w-full flex items-center gap-4 px-5 py-4 rounded-xl font-semibold text-red-500 hover:bg-red-50 transition-all">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    লগআউট
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 ml-72 p-10">
+            <header class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 id="tab-title" class="text-3xl font-bold text-gray-900 mb-1">স্বাগতম, অ্যাডমিন!</h2>
+                    <p class="text-gray-500">আপনার আজকের ওয়েবসাইটের আপডেট এক নজরে দেখে নিন।</p>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div
+                        class="flex items-center gap-3 bg-white p-2 pr-5 rounded-full shadow-sm border border-gray-100">
+                        <div
+                            class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center font-bold">
+                            A</div>
+                        <span class="font-semibold">Super Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tabs Content -->
+            <div id="overview" class="tab-content transition-all duration-300">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div
+                        class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-orange-500 group-hover:text-white transition-all">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-medium mb-1">মোট সদস্য</p>
+                        <h3 id="stat-members" class="text-4xl font-bold tracking-tight">০</h3>
+                    </div>
+                    <div
+                        class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-blue-500 group-hover:text-white transition-all">
+                                <i class="fas fa-images"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-medium mb-1">গ্যালারি ছবি</p>
+                        <h3 id="stat-gallery" class="text-4xl font-bold tracking-tight">০</h3>
+                    </div>
+                    <div
+                        class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-purple-500 group-hover:text-white transition-all">
+                                <i class="fas fa-hand-holding-heart"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-medium mb-1">মোট অনুদান</p>
+                        <h3 id="stat-donations" class="text-4xl font-bold tracking-tight">৳ ০</h3>
+                    </div>
+                    <div
+                        class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-green-500 group-hover:text-white transition-all">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-medium mb-1">সক্রিয় প্রজেক্ট</p>
+                        <h3 id="stat-projects" class="text-4xl font-bold tracking-tight">০</h3>
+                    </div>
+                    <div
+                        class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-red-500 group-hover:text-white transition-all">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-medium mb-1">নতুন অভিযোগ</p>
+                        <h3 id="stat-complaints" class="text-4xl font-bold tracking-tight">০ টি</h3>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div id="recent-activity" class="mt-12 bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-xl font-bold mb-8">সাম্প্রতিক অ্যাক্টিভিটি</h4>
+                    <div class="space-y-6" id="activity-log">
+                        <!-- Populated by JS -->
+                        <p class="text-gray-400">কোনো সাম্প্রতিক অ্যাক্টিভিটি নেই।</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="gallery" class="tab-content hidden transition-all duration-300">
+                <div class="flex justify-between items-center mb-8">
+                    <h4 class="text-xl font-bold">গ্যালারি ম্যানেজমেন্ট</h4>
+                    <button onclick="openFolderModal()"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-folder-plus mr-2"></i> নতুন ফোল্ডার তৈরি করুন
+                    </button>
+                </div>
+
+                <!-- Admin Folder View -->
+                <div id="admin-gallery-folders" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <!-- Dynamic Folders will be injected here -->
+                </div>
+            </div>
+
+            <!-- Admin Folder Images View -->
+            <div id="admin-gallery-images" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center gap-4">
+                        <button onclick="closeAdminGallery()"
+                            class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h4 id="admin-current-folder-name" class="text-xl font-bold">ফোল্ডার নাম</h4>
+                    </div>
+                    <button onclick="openGalleryModalForAdd()"
+                        class="bg-orange-theme text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-plus mr-2"></i> এই ফোল্ডারে ছবি যোগ করুন
+                    </button>
+                </div>
+                <div id="gallery-list" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Items -->
+                </div>
+            </div>
+
+            <!-- Members Tab -->
+            <div id="members" class="tab-content hidden transition-all duration-300">
+                <div class="flex justify-between items-center mb-10">
+                    <h4 class="text-2xl font-bold">সদস্য তালিকা</h4>
+                    <button onclick="openModal('member')"
+                        class="bg-orange-theme text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-user-plus mr-2"></i> নতুন সদস্য যোগ করুন
+                    </button>
+                </div>
+                <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-8 py-5 font-bold text-gray-600">নাম</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">পদবি</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">আইডি</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">যোগদানের তারিখ</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-list" class="divide-y divide-gray-50">
+                            <!-- Items -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Donations Tab -->
+            <div id="donations" class="tab-content hidden transition-all duration-300">
+                <div class="flex justify-between items-center mb-10">
+                    <h4 class="text-2xl font-bold">অনুদান রেকর্ড</h4>
+                </div>
+                <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-8 py-5 font-bold text-gray-600">দাতার নাম</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">পদ্ধতি</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">পরিমাণ</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">তারিখ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donations-list" class="divide-y divide-gray-50">
+                            <!-- Items -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects" class="tab-content hidden transition-all duration-300">
+                <div class="flex justify-between items-center mb-10">
+                    <h4 class="text-2xl font-bold">প্রজেক্ট প্রগ্রেস ম্যানেজমেন্ট</h4>
+                    <button onclick="openModal('project')"
+                        class="bg-orange-theme text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-plus mr-2"></i> নতুন প্রজেক্ট যোগ করুন
+                    </button>
+                </div>
+                <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">প্রজেক্টের নাম</th>
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">টার্গেট</th>
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">সংগৃহীত</th>
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">অগ্রগতি %</th>
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-list" class="divide-y divide-gray-50">
+                            <!-- Items -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Project Section Notice Settings -->
+                <div class="mt-12 bg-orange-50/50 p-8 rounded-[2rem] border border-orange-100">
+                    <h5 class="text-lg font-bold mb-4 text-orange-800"><i class="fas fa-bullhorn mr-2"></i> প্রজেক্ট
+                        সেকশন নোটিশ (ঐচ্ছিক)</h5>
+                    <p class="text-sm text-gray-500 mb-4">যদি বর্তমানে কোনো প্রজেক্ট না থাকে বা আপনি ভিজিটরদের কোনো
+                        মেসেজ দেখাতে চান (যেমন: "বর্তমানে কোনো প্রকল্প নিয়ে কাজ করা হচ্ছে না"), তবে এখানে লিখুন। এটি
+                        লিখলে প্রজেক্ট লিস্টের বদলে এই মেসেজটি হোম পেজে দেখাবে।</p>
+                    <div class="flex flex-col md:flex-row gap-4 text-left">
+                        <textarea id="project-notice-text"
+                            class="flex-1 px-5 py-4 rounded-xl border border-gray-100 bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all resize-none font-medium"
+                            placeholder="এখানে আপনার মেসেজটি লিখুন..." rows="2"></textarea>
+                        <button onclick="saveProjectNotice()"
+                            class="bg-orange-theme text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition-all self-start shadow-lg shadow-orange-500/20">
+                            নোটিশ সেভ করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Settings Tab -->
+            <div id="db-settings" class="tab-content hidden transition-all duration-300">
+                <div class="max-w-2xl bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm mx-auto">
+                    <div
+                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-3xl mb-8 mx-auto">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-4 text-center">ক্লাউড ডাটাবেস কানেক্ট করুন</h4>
+                    <p class="text-gray-500 text-center mb-8">আপনার গুগল শিটের 'Web App URL' টি এখানে দিন যাতে ডাটা
+                        আজীবনের জন্য সুরক্ষিত থাকে এবং সবাই দেখতে পায়।</p>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-2 ml-1 text-gray-700">Google Apps Script
+                                URL</label>
+                            <input type="url" id="cloud-url-input"
+                                class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all font-mono text-sm"
+                                placeholder="https://script.google.com/macros/s/.../exec">
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <button onclick="saveCloudUrl()"
+                                class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-all">ইউআরএল
+                                সেভ করুন</button>
+
+                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50">
+                                <button onclick="fetchCloud(this)"
+                                    class="flex items-center justify-center gap-2 bg-blue-50 text-blue-600 py-4 rounded-xl font-bold hover:bg-blue-100 transition-all border border-blue-100">
+                                    <i class="fas fa-download"></i> ক্লাউড থেকে লোড
+                                </button>
+                                <button onclick="syncCloud(this)"
+                                    class="flex items-center justify-center gap-2 bg-orange-theme text-white py-4 rounded-xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20">
+                                    <i class="fas fa-upload"></i> ক্লাউডে ব্যাকআপ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 max-w-2xl mx-auto p-8 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                    <h5 class="font-bold text-gray-700 mb-3"><i class="fas fa-info-circle mr-2"></i> কিভাবে কানেক্ট
+                        করবেন?</h5>
+                    <ol class="text-sm text-gray-500 space-y-2 list-decimal ml-5">
+                        <li>একটি গুগল শিট খুলুন।</li>
+                        <li><b>Extensions > Apps Script</b>-এ যান।</li>
+                        <li>পুরানো কোড মুছে দিয়ে আমার দেওয়া কোডটি পেস্ট করুন।</li>
+                        <li><b>Deploy > New Deployment</b> এ গিয়ে 'Who has access' এ **'Anyone'** দিয়ে ডিপ্লয় করুন।
+                        </li>
+                        <li>URL টি কপি করে এখানে পেস্ট করুন।</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Admin Settings Tab -->
+            <div id="admin-settings" class="tab-content hidden transition-all duration-300">
+                <div class="max-w-xl bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm mx-auto">
+                    <div
+                        class="w-20 h-20 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-3xl mb-8 mx-auto">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-8 text-center">লগইন তথ্য পরিবর্তন করুন</h4>
+
+                    <form id="admin-auth-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-2 ml-1 text-gray-700">নতুন ইউজারনেম</label>
+                            <input type="text" id="new-username"
+                                class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2 ml-1 text-gray-700">নতুন পাসওয়ার্ড</label>
+                            <input type="password" id="new-password"
+                                class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2 ml-1 text-gray-700">রিকভারি ইমেইল</label>
+                            <input type="email" id="recovery-email-settings"
+                                class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium"
+                                required>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-all shadow-xl">আপডেট
+                            করুন</button>
+                    </form>
+                    <p class="mt-6 text-xs text-center text-gray-400"><i class="fas fa-info-circle mr-1"></i> মনে
+                        রাখবেন, এটি পরিবর্তন করলে পরবর্তী বার নতুন তথ্য দিয়ে লগইন করতে হবে।</p>
+                </div>
+            </div>
+
+            <!-- Complaints Tab -->
+            <div id="complaints" class="tab-content hidden transition-all duration-300">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-1">অজ্ঞাতনামা অভিযোগ বক্স</h2>
+                    <p class="text-sm font-medium text-gray-500 bg-white px-4 py-2 rounded-full border border-gray-100">
+                        মোট অভিযোগ: <span id="complaint-count-badge" class="text-orange-600 font-bold">০</span>
+                    </p>
+                </div>
+
+                <div id="complaints-container" class="grid grid-cols-1 gap-6">
+                    <!-- Complaints will be rendered here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-backdrop"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] hidden items-center justify-center p-6">
+        <!-- Folder Modal -->
+        <div id="modal-folder" class="modal-box bg-white w-full max-w-sm rounded-[2rem] p-10 hidden">
+            <h3 class="text-2xl font-bold mb-6" id="folder-modal-title">নতুন ফোল্ডার</h3>
+            <form id="form-folder" class="space-y-4">
+                <input type="hidden" id="folder-old-id">
+                <div>
+                    <label class="block text-sm font-bold mb-1">ফোল্ডারের নাম</label>
+                    <input type="text" id="folder-name"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required placeholder="যেমন: ত্রাণ বিতরণ">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">রঙ নির্বাচন করুন</label>
+                    <select id="folder-color"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all">
+                        <option value="orange">Orange</option>
+                        <option value="blue">Blue</option>
+                        <option value="purple">Purple</option>
+                        <option value="green">Green</option>
+                        <option value="red">Red</option>
+                        <option value="indigo">Indigo</option>
+                    </select>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-100 rounded-xl font-bold hover:bg-gray-50 transition-all">বাতিল</button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-orange-theme text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">সংরক্ষণ</button>
+                </div>
+            </form>
+        </div>
+        <!-- Gallery Modal -->
+        <div id="modal-gallery" class="modal-box bg-white w-full max-w-md rounded-[2rem] p-10 hidden">
+            <h3 class="text-2xl font-bold mb-6" id="g-modal-title">গ্যালারি আইটেম যোগ করুন</h3>
+            <form id="form-gallery" class="space-y-4">
+                <input type="hidden" id="gallery-id">
+                <div>
+                    <label class="block text-sm font-bold mb-1">প্রকল্প/ফোল্ডার নির্বাচন করুন</label>
+                    <div id="g-dest-indicator"
+                        class="mb-2 p-2 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100 hidden">
+                        <i class="fas fa-folder-open mr-1"></i> আপলোড হচ্ছে: <span id="g-dest-name">...</span>
+                    </div>
+                    <select id="g-category" onchange="updateDestIndicator()"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">টাইটেল (ঐচ্ছিক - ডিফল্ট: কার্যক্রমের ছবি)</label>
+                    <input type="text" id="g-title"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        placeholder="Activity Photo">
+                </div>
+                <div class="space-y-4">
+                    <div id="upload-mode-container">
+                        <label class="flex items-center gap-2 mb-2 cursor-pointer group">
+                            <input type="checkbox" id="g-local-mode" class="w-4 h-4 accent-orange-500">
+                            <span
+                                class="text-xs font-bold text-gray-700 group-hover:text-orange-600 transition-colors">পিসি
+                                স্টোরেজ মোড (ফাইল নেম সেভ হবে - আনলিমিটেড)</span>
+                        </label>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-1">ছবি সিলেক্ট করুন</label>
+                            <input type="file" id="g-image-file" accept="image/*" multiple
+                                onchange="previewImagesMultiple(this, 'g-preview-area')"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all">
+                            <div id="g-preview-area"
+                                class="grid grid-cols-4 gap-2 mt-4 max-h-32 overflow-y-auto hidden">
+                                <!-- Previews -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="w-full border-t border-gray-100"></div>
+                        </div>
+                        <div class="relative flex justify-center text-[10px] uppercase">
+                            <span class="bg-white px-2 text-gray-400 font-bold tracking-widest text-[9px]">অথবা সরাসরি
+                                পাথ বা লিঙ্ক দিন</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <input type="text" id="g-image-url"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                            placeholder="যেমন: images/gallery/pic1.jpg">
+                    </div>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-100 rounded-xl font-bold hover:bg-gray-50 transition-all">বাতিল</button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-orange-theme text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">সংরক্ষণ
+                        করুন</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Member Modal -->
+        <div id="modal-member" class="modal-box bg-white w-full max-w-md rounded-[2rem] p-10 hidden">
+            <h3 class="text-2xl font-bold mb-6" id="m-modal-title">নতুন সদস্য যুক্ত করুন</h3>
+            <form id="form-member" class="space-y-4">
+                <input type="hidden" id="member-old-id">
+                <div>
+                    <label class="block text-sm font-bold mb-1">সদস্যের নাম</label>
+                    <input type="text" id="m-name"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">সদস্য আইডি (উদা: HS-001)</label>
+                    <input type="text" id="m-id"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">পদবী</label>
+                    <input type="text" id="m-pos"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">যোগদানের সময়/তারিখ (উদা: মার্চ ২০২৪)</label>
+                    <input type="text" id="m-date"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        placeholder="মার্চ ২০২৪">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">ছবি আপলোড করুন</label>
+                    <input type="file" id="m-pic-file" accept="image/*" onchange="previewImage(this, 'm-preview')"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all">
+                    <input type="hidden" id="m-pic">
+                    <div id="m-preview-container" class="mt-2 hidden">
+                        <img id="m-preview" src="" class="w-full h-32 object-cover rounded-xl border">
+                    </div>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-100 rounded-xl font-bold hover:bg-gray-50 transition-all">বাতিল</button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-orange-theme text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">সংরক্ষণ
+                        করুন</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Project Modal -->
+        <div id="modal-project" class="modal-box bg-white w-full max-w-md rounded-[2rem] p-10 hidden text-left">
+            <h3 class="text-2xl font-bold mb-6" id="p-modal-title">প্রজেক্ট তথ্য যোগ করুন</h3>
+            <form id="form-project" class="space-y-4">
+                <input type="hidden" id="project-id">
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">প্রজেক্টের নাম</label>
+                    <input type="text" id="p-title"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">টার্গেট অ্যামাউন্ট (৳)</label>
+                    <input type="number" id="p-target"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">সংগৃহীত অ্যামাউন্ট (৳)</label>
+                    <input type="number" id="p-raised"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-100 rounded-xl font-bold hover:bg-gray-50 transition-all">বাতিল</button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-orange-theme text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">সংরক্ষণ
+                        করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app-data.js"></script>
+    <script>
+        // Simple Auth Simulation
+        const loginForm = document.getElementById('login-form');
+        const loginSection = document.getElementById('login-section');
+        const dashboard = document.getElementById('dashboard');
+        const loginError = document.getElementById('login-error');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            const settings = AppData.get('settings');
+            const auth = settings.auth || { username: 'admin', password: '1234' };
+
+            if (user === auth.username && pass === auth.password) {
+                loginSection.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                localStorage.setItem('isLoggedIn', 'true');
+                initDashboard();
+            } else {
+                loginError.classList.remove('hidden');
+                setTimeout(() => loginError.classList.add('hidden'), 3000);
+            }
+        });
+
+        // Tab Switching
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-orange-theme', 'text-white', 'shadow-lg');
+                btn.classList.add('text-gray-500', 'hover:bg-gray-50');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('fade-in');
+
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-orange-theme', 'text-white', 'shadow-lg');
+                activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-50');
+            }
+
+            const titles = {
+                'overview': 'ওভারভিউ',
+                'gallery': 'গ্যালারি ম্যানেজমেন্ট',
+                'members': 'সদস্য তালিকা',
+                'donations': 'অনুদান রেকর্ড',
+                'projects': 'প্রজেক্ট প্রগ্রেস',
+                'db-settings': 'ডাটাবেস সেটিংস',
+                'admin-settings': 'অ্যাডমিন সেটিংস',
+                'complaints': 'অভিযোগ বক্স'
+            };
+            document.getElementById('tab-title').innerText = titles[tabId] || 'অ্যাডমিন ড্যাশবোর্ড';
+
+            if (tabId === 'overview') initDashboard();
+            if (tabId === 'gallery') renderGallery();
+            if (tabId === 'members') renderMembers();
+            if (tabId === 'donations') renderDonations();
+            if (tabId === 'projects') renderProjects();
+            if (tabId === 'admin-settings') renderAdminSettings();
+            if (tabId === 'complaints') renderComplaints();
+        }
+
+        // Activity Logger Helper
+        function logActivity(text) {
+            console.log("Activity:", text);
+            // Optionally could save to a log array in AppData
+            const logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+            logs.unshift({ text, date: new Date().toLocaleString() });
+            localStorage.setItem('admin_logs', JSON.stringify(logs.slice(0, 10)));
+            renderActivityLog();
+        }
+
+        function renderActivityLog() {
+            const logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+            const container = document.getElementById('activity-log');
+            if (container) {
+                if (logs.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400">কোনো সাম্প্রতিক অ্যাক্টিভিটি নেই।</p>';
+                } else {
+                    container.innerHTML = logs.map(log => `
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="text-gray-800 font-medium">${log.text}</p>
+                                <p class="text-xs text-gray-400">${log.date}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        // Dashboard Stats
+        function initDashboard() {
+            const members = AppData.get('members') || [];
+            const gallery = AppData.get('gallery') || [];
+            const donations = AppData.get('donations') || [];
+            const projects = AppData.get('projects') || [];
+            const complaints = AppData.get('complaints') || [];
+
+            document.getElementById('stat-members').innerText = members.length + ' জন';
+            document.getElementById('stat-gallery').innerText = gallery.length + ' টি';
+            document.getElementById('stat-projects').innerText = projects.length + ' টি';
+            document.getElementById('stat-complaints').innerText = complaints.length + ' টি';
+
+            let totalDonation = donations.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+            document.getElementById('stat-donations').innerText = '৳ ' + totalDonation.toLocaleString();
+
+            // Render counters in gallery tab if open
+            if (!document.getElementById('admin-gallery-folders').classList.contains('hidden')) {
+                renderGalleryFolders();
+            }
+            renderActivityLog();
+        }
+
+        // Gallery Logic
+        let currentAdminFolder = 'all';
+
+        function renderGalleryFolders() {
+            const folders = AppData.get('categories') || [];
+            const container = document.getElementById('admin-gallery-folders');
+            const gallery = AppData.get('gallery') || [];
+
+            // Color Map for icons
+            const colorClasses = {
+                orange: 'text-orange-500',
+                blue: 'text-blue-500',
+                purple: 'text-purple-500',
+                green: 'text-emerald-500',
+                red: 'text-red-500',
+                indigo: 'text-indigo-500'
+            };
+
+            container.innerHTML = folders.map(f => {
+                const count = gallery.filter(img => img.category === f.id).length;
+                return `
+                    <div class="bg-white border border-gray-100 rounded-[2rem] p-8 hover:shadow-xl transition-all group relative text-center">
+                        <button onclick="openAdminGallery('${f.id}')" class="w-full">
+                            <i class="fas fa-folder text-6xl ${colorClasses[f.color] || 'text-orange-500'} mb-4 block group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-lg block mb-1">${f.name}</span>
+                            <p class="text-sm text-gray-400">${count} টি ছবি</p>
+                        </button>
+                        
+                        <!-- Folder Actions -->
+                        <div class="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openFolderModal('${f.id}')" class="w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button onclick="deleteFolder('${f.id}')" class="w-8 h-8 bg-red-50 text-red-600 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Also update the select options in the image upload modal
+            const select = document.getElementById('g-category');
+            if (select) {
+                select.innerHTML = folders.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+            }
+        }
+
+        function openAdminGallery(category) {
+            currentAdminFolder = category;
+            const catMap = AppData.getCategoryMap();
+            document.getElementById('admin-gallery-folders').classList.add('hidden');
+            document.getElementById('admin-gallery-images').classList.remove('hidden');
+            document.getElementById('admin-current-folder-name').innerText = catMap[category] || 'ফোল্ডারের ছবি';
+
+            // Set default in modal
+            const select = document.getElementById('g-category');
+            if (select) select.value = category;
+
+            renderGallery();
+        }
+
+        function closeAdminGallery() {
+            currentAdminFolder = 'all';
+            document.getElementById('admin-gallery-folders').classList.remove('hidden');
+            document.getElementById('admin-gallery-images').classList.add('hidden');
+            renderGalleryFolders();
+        }
+
+        function renderGallery() {
+            if (currentAdminFolder === 'all') {
+                renderGalleryFolders();
+                return;
+            }
+
+            const container = document.getElementById('gallery-list');
+            const data = (AppData.get('gallery') || []).filter(item => item.category === currentAdminFolder);
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-20 text-center">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                        <i class="fas fa-images text-2xl"></i>
+                    </div>
+                    <p class="text-gray-400 font-bold">এই ফোল্ডারে কোনো ছবি নেই</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm group relative text-left">
+                    <img src="${item.image}" class="w-full h-40 object-cover rounded-2xl mb-4" alt="">
+                    <p class="font-bold text-gray-800 mb-3 truncate px-1 text-sm">${item.title || 'কার্যক্রমের ছবি'}</p>
+                    <div class="flex gap-2">
+                        <button onclick="editGallery(${item.id})" class="flex-1 text-blue-500 bg-blue-50 py-2 rounded-xl text-xs font-bold hover:bg-blue-500 hover:text-white transition-all">এডিট</button>
+                        <button onclick="deleteGallery(${item.id})" class="flex-1 text-red-500 bg-red-50 py-2 rounded-xl text-xs font-bold hover:bg-red-500 hover:text-white transition-all">ডিলিট</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Folder Modal Functions
+        function openFolderModal(id = null) {
+            const modal = document.getElementById('modal-folder');
+            const title = document.getElementById('folder-modal-title');
+            const form = document.getElementById('form-folder');
+
+            modal.classList.remove('hidden');
+            document.getElementById('modal-backdrop').classList.replace('hidden', 'flex');
+
+            if (id) {
+                const folders = AppData.get('categories') || [];
+                const folder = folders.find(f => f.id === id);
+                title.innerText = 'ফোল্ডার এডিট করুন';
+                document.getElementById('folder-old-id').value = id;
+                document.getElementById('folder-name').value = folder.name;
+                document.getElementById('folder-color').value = folder.color;
+            } else {
+                title.innerText = 'নতুন ফোল্ডার তৈরি করুন';
+                form.reset();
+                document.getElementById('folder-old-id').value = '';
+            }
+        }
+
+        document.getElementById('form-folder')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const oldId = document.getElementById('folder-old-id').value;
+            const name = document.getElementById('folder-name').value;
+            const color = document.getElementById('folder-color').value;
+
+            let folders = AppData.get('categories') || [];
+
+            if (oldId) {
+                // Edit
+                folders = folders.map(f => f.id === oldId ? { ...f, name, color } : f);
+                logActivity(`ফোল্ডার এডিট করা হয়েছে: ${name}`);
+            } else {
+                // Create
+                const id = 'cat_' + Date.now();
+                folders.push({ id, name, color });
+                logActivity(`নতুন ফোল্ডার তৈরি করা হয়েছে: ${name}`);
+            }
+
+            AppData.set('categories', folders);
+            AppData.saveToCloud();
+            closeModal();
+            renderGalleryFolders();
+            initDashboard(); // Update counts
+        });
+
+        function deleteFolder(id) {
+            const folders = AppData.get('categories') || [];
+            const folder = folders.find(f => f.id === id);
+
+            if (confirm(`আপনি কি নিশ্চিত যে আপনি "${folder.name}" ফোল্ডারটি ডিলিট করতে চান? এর ভেতরের সব ছবিও ডিলিট হয়ে যাবে।`)) {
+                // Delete Folder
+                const updatedFolders = folders.filter(f => f.id !== id);
+                AppData.set('categories', updatedFolders);
+
+                // Delete Images in this folder
+                const gallery = AppData.get('gallery') || [];
+                const filteredGallery = gallery.filter(img => img.category !== id);
+                AppData.set('gallery', filteredGallery);
+
+                logActivity(`ফোল্ডার ডিলিট করা হয়েছে: ${folder.name}`);
+                AppData.saveToCloud();
+                renderGalleryFolders();
+            }
+        }
+
+        let galleryBuffer = [];
+
+
+
+        // Image Compression Function
+        async function compressImage(base64Str, maxWidth = 1200, quality = 0.6) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = base64Str;
+                img.onerror = () => reject("Image load failed");
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    } catch (e) { reject(e); }
+                };
+            });
+        }
+
+        async function previewImagesMultiple(input, areaId) {
+            const area = document.getElementById(areaId);
+            area.innerHTML = `
+                <div class="col-span-full py-4 text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> ছবি অপ্টিমাইজ করা হচ্ছে...
+                </div>
+            `;
+            area.classList.remove('hidden');
+            galleryBuffer = [];
+
+            const files = Array.from(input.files);
+            for (const file of files) {
+                const reader = new FileReader();
+                const promise = new Promise(resolve => {
+                    reader.onload = async (e) => {
+                        const compressed = await compressImage(e.target.result, 800, 0.5); // More aggressive compression for bulk
+                        galleryBuffer.push(compressed);
+                        resolve();
+                    };
+                });
+                reader.readAsDataURL(file);
+                await promise;
+            }
+
+            // Render Previews
+            area.innerHTML = galleryBuffer.map(img => `
+                <div class="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                    <img src="${img}" class="w-full h-full object-cover">
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('form-gallery').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('gallery-id').value;
+            const category = document.getElementById('g-category').value;
+            const title = document.getElementById('g-title').value || 'কার্যক্রমের ছবি';
+            const btn = e.target.querySelector('button[type="submit"]');
+
+            if (galleryBuffer.length === 0 && !id) return alert('অনুগ্রহ করে ছবি নির্বাচন করুন');
+
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+
+            try {
+                let currentGallery = AppData.get('gallery') || [];
+
+                // STRICT CATEGORY ENFORCEMENT
+                // If the user is inside a specific folder view, always use that folder's ID
+                // regardless of what the select/dropdown says.
+                const finalCategory = (currentAdminFolder && currentAdminFolder !== 'all') ? currentAdminFolder : category;
+
+                if (id) {
+                    // Edit mode (Single Item)
+                    const gUrl = document.getElementById('g-image-url').value;
+                    const gImage = gUrl || galleryBuffer[0] || document.getElementById('g-image-temp-edit')?.value;
+                    const index = currentGallery.findIndex(item => String(item.id) === String(id));
+                    if (index !== -1) {
+                        currentGallery[index] = {
+                            id: parseFloat(id),
+                            title,
+                            category: finalCategory,
+                            image: gImage
+                        };
+                    }
+                } else {
+                    // New Upload Mode
+                    const gUrl = document.getElementById('g-image-url').value;
+                    const isLocalMode = document.getElementById('g-local-mode').checked;
+
+                    if (gUrl) {
+                        currentGallery.push({
+                            id: Date.now() + Math.random(),
+                            title,
+                            category: finalCategory,
+                            image: gUrl
+                        });
+                    } else if (isLocalMode) {
+                        const files = Array.from(document.getElementById('g-image-file').files);
+                        const catMap = AppData.getCategoryMap();
+                        const folderName = catMap[finalCategory] || finalCategory;
+
+                        files.forEach((file, i) => {
+                            currentGallery.push({
+                                id: Date.now() + i + Math.random(),
+                                title,
+                                category: finalCategory,
+                                image: `images/gallery/${folderName}/${file.name}`
+                            });
+                        });
+                    } else {
+                        // Base64 Bulk Upload - Optimized with strict category lock
+                        for (let i = 0; i < galleryBuffer.length; i++) {
+                            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> প্রোসেসিং হচ্ছে (${i + 1}/${galleryBuffer.length})...`;
+                            currentGallery.push({
+                                id: Date.now() + i + Math.random(),
+                                title: title,
+                                category: finalCategory,
+                                image: galleryBuffer[i]
+                            });
+                            await new Promise(r => setTimeout(r, 5));
+                        }
+                    }
+
+                    // Final verification of newly added items
+                    const recentThreshold = Date.now() - 30000;
+                    currentGallery.forEach(item => {
+                        if (item.id > recentThreshold) {
+                            item.category = finalCategory;
+                        }
+                    });
+                }
+
+                // Save to local storage after adding all items
+                AppData.set('gallery', currentGallery);
+
+                // Final Sync
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> ক্লাউড সিঙ্ক হচ্ছে...`;
+                if (AppData.getRemoteUrl()) {
+                    await AppData.saveToCloud();
+                }
+
+                // Custom success logging
+                const catMap = AppData.getCategoryMap();
+                const destFolderName = catMap[finalCategory] || 'Unknown';
+
+                let logMsg = "";
+                if (id) {
+                    logMsg = `আইটেম আপডেট করা হয়েছে (${destFolderName} ফোল্ডারে)`;
+                } else if (gUrl) {
+                    logMsg = `লিঙ্ক থেকে ছবি যোগ হয়েছে (${destFolderName} ফোল্ডারে)`;
+                } else if (isLocalMode) {
+                    const files = Array.from(document.getElementById('g-image-file').files);
+                    logMsg = `${files.length} টি ছবি পিসি মোডে যোগ হয়েছে (${destFolderName})`;
+                } else {
+                    logMsg = `${galleryBuffer.length} টি ছবি আপলোড হয়েছে (${destFolderName} ফোল্ডারে)`;
+                }
+
+                logActivity(logMsg);
+                closeModal();
+                renderGallery();
+                initDashboard();
+            } catch (err) {
+                console.error(err);
+                alert('আপলোড ব্যর্থ হয়েছে। অনুগ্রহ করে অল্প অল্প করে ছবি দিয়ে চেষ্টা করুন।');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+
+        function deleteGallery(id) {
+            if (confirm('আপনি কি নিশ্চিত যে এটি সোশ্যাল ওয়েবসাইট থেকে ডিলিট করতে চান?')) {
+                AppData.removeItem('gallery', id);
+
+                if (AppData.getRemoteUrl()) {
+                    AppData.saveToCloud();
+                }
+
+                renderGallery();
+                initDashboard(); // Update stats
+            }
+        }
+
+        function editGallery(id) {
+            const item = AppData.get('gallery').find(i => i.id == id);
+            document.getElementById('gallery-id').value = item.id;
+            document.getElementById('g-title').value = item.title;
+            document.getElementById('g-category').value = item.category || 'medical';
+
+            // For editing, show current image in preview
+            const area = document.getElementById('g-preview-area');
+            area.innerHTML = `<div class="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                <img src="${item.image}" class="w-full h-full object-cover">
+                <input type="hidden" id="g-image-temp-edit" value="${item.image}">
+            </div>`;
+            area.classList.remove('hidden');
+            galleryBuffer = [item.image];
+
+            document.getElementById('g-modal-title').innerText = 'গ্যালারি আইটেম এডিট করুন';
+            openModal('gallery');
+        }
+
+        // Members Logic
+        function renderMembers() {
+            const list = document.getElementById('members-list');
+            const data = AppData.get('members');
+            list.innerHTML = data.map(m => `
+                <tr>
+                    <td class="px-8 py-5">
+                        <div class="flex items-center gap-3">
+                            <img src="${m.pic || 'https://i.pravatar.cc/100'}" class="w-10 h-10 rounded-full object-cover">
+                            <span class="font-bold text-gray-800">${m.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5 font-medium text-gray-500">${m.position}</td>
+                    <td class="px-8 py-5 text-gray-500 font-mono">${m.id}</td>
+                    <td class="px-8 py-5 text-gray-500 font-medium">${m.date || 'ফেব্রুয়ারি ২০২৬'}</td>
+                    <td class="px-8 py-5">
+                        <button onclick="editMember('${m.id}')" class="text-blue-500 hover:underline font-bold mr-4 text-sm">এডিট</button>
+                        <button onclick="deleteMember('${m.id}')" class="text-red-500 hover:underline font-bold text-sm">রিমুভ</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('form-member').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldId = document.getElementById('member-old-id').value;
+            const members = AppData.get('members');
+            const existing = oldId ? members.find(m => m.id === oldId) : null;
+
+            const mPic = document.getElementById('m-pic').value;
+            const newMember = {
+                id: document.getElementById('m-id').value,
+                name: document.getElementById('m-name').value,
+                position: document.getElementById('m-pos').value,
+                org: "Helpful Squad & Freedom Foundation",
+                date: document.getElementById('m-date').value || 'ফেব্রুয়ারি ২০২৬',
+                status: 'Active',
+                pic: mPic || `https://i.pravatar.cc/300?img=${Math.floor(Math.random() * 50)}`
+            };
+
+            if (oldId) {
+                AppData.removeItem('members', oldId);
+            }
+            AppData.addItem('members', newMember);
+            logActivity(`${oldId ? 'সদস্যের তথ্য আপডেট' : 'নতুন সদস্য যোগ'} করা হয়েছে: ${newMember.name}`);
+
+            if (AppData.getRemoteUrl()) {
+                await AppData.saveToCloud();
+            }
+
+            closeModal();
+            renderMembers();
+            initDashboard(); // Update stats
+        });
+
+        function deleteMember(id) {
+            const m = AppData.get('members').find(i => i.id === id);
+            if (confirm('সদস্যটিকে কি মেম্বার লিস্ট থেকে সরাতে চান?')) {
+                AppData.removeItem('members', id);
+                logActivity(`সদস্য রিমুভ করা হয়েছে: ${m ? m.name : id}`);
+
+                if (AppData.getRemoteUrl()) {
+                    AppData.saveToCloud();
+                }
+
+                renderMembers();
+                initDashboard(); // Update stats
+            }
+        }
+
+        function editMember(id) {
+            const m = AppData.get('members').find(i => i.id === id);
+            document.getElementById('member-old-id').value = m.id;
+            document.getElementById('m-name').value = m.name;
+            document.getElementById('m-id').value = m.id;
+            document.getElementById('m-pos').value = m.position;
+            document.getElementById('m-date').value = m.date || '';
+            document.getElementById('m-pic').value = m.pic || '';
+            if (m.pic) {
+                document.getElementById('m-preview').src = m.pic;
+                document.getElementById('m-preview-container').classList.remove('hidden');
+            }
+            document.getElementById('m-modal-title').innerText = 'সদস্যের তথ্য এডিট করুন';
+            openModal('member');
+        }
+
+        // Donations Logic
+        function renderDonations() {
+            const list = document.getElementById('donations-list');
+            const data = AppData.get('donations');
+            list.innerHTML = data.map(d => `
+                <tr>
+                    <td class="px-8 py-5 font-bold text-gray-800">${d.name}</td>
+                    <td class="px-8 py-5 text-gray-500">${d.method}</td>
+                    <td class="px-8 py-5 font-bold text-green-600">৳ ${d.amount}</td>
+                    <td class="px-8 py-5 text-gray-500">${d.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Projects Logic
+        function renderProjects() {
+            const list = document.getElementById('projects-list');
+            const data = AppData.get('projects') || [];
+            list.innerHTML = data.map(p => {
+                const percent = Math.min(100, Math.round((p.raised / p.target) * 100));
+                return `
+                <tr>
+                    <td class="px-8 py-5 font-bold text-gray-800">${p.title}</td>
+                    <td class="px-8 py-5 text-gray-500 font-bold">৳ ${p.target.toLocaleString()}</td>
+                    <td class="px-8 py-5 text-gray-500 font-bold">৳ ${p.raised.toLocaleString()}</td>
+                    <td class="px-8 py-5">
+                        <div class="flex items-center gap-2">
+                             <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-orange-500" style="width: ${percent}%"></div>
+                             </div>
+                             <span class="text-xs font-bold text-orange-600">${percent}%</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <button onclick="editProject(${p.id})" class="text-blue-500 hover:underline font-bold mr-4 text-sm">এডিট</button>
+                        <button onclick="deleteProject(${p.id})" class="text-red-500 hover:underline font-bold text-sm">ডিলিট</button>
+                    </td>
+                </tr>
+            `}).join('');
+
+            // Load notice text if exists
+            const settings = AppData.get('settings') || { projectMessage: "" };
+            document.getElementById('project-notice-text').value = settings.projectMessage || "";
+        }
+
+        function saveProjectNotice() {
+            const text = document.getElementById('project-notice-text').value;
+            let settings = AppData.get('settings') || { projectMessage: "" };
+            settings.projectMessage = text;
+            AppData.set('settings', settings);
+            alert('প্রজেক্ট সেকশন নোটিশ সফলভাবে সেভ করা হয়েছে!');
+            if (typeof initDashboard === 'function') initDashboard();
+        }
+
+        document.getElementById('form-project').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const idValue = document.getElementById('project-id').value;
+                const title = document.getElementById('p-title').value;
+                const target = parseFloat(document.getElementById('p-target').value) || 0;
+                const raised = parseFloat(document.getElementById('p-raised').value) || 0;
+
+                const newProject = {
+                    id: idValue ? parseFloat(idValue) : Date.now(),
+                    title: title,
+                    target: target,
+                    raised: raised,
+                    status: 'Running'
+                };
+
+                let projects = AppData.get('projects') || [];
+
+                if (idValue) {
+                    // Edit mode - find by ID (checking both string and numeric types)
+                    const index = projects.findIndex(p => String(p.id) === String(idValue));
+                    if (index !== -1) {
+                        projects[index] = newProject;
+                    } else {
+                        // If not found for some reason, just push
+                        projects.push(newProject);
+                    }
+                } else {
+                    // New project mode
+                    projects.push(newProject);
+                }
+
+                AppData.set('projects', projects);
+                logActivity(`${idValue ? 'প্রজেক্ট আপডেট' : 'নতুন প্রজেক্ট'} করা হয়েছে: ${title}`);
+
+                if (AppData.getRemoteUrl()) {
+                    await AppData.saveToCloud();
+                }
+
+                alert('প্রজেক্টের তথ্য সফলভাবে সেভ করা হয়েছে!');
+
+                closeModal();
+                renderProjects();
+                initDashboard();
+            } catch (err) {
+                console.error(err);
+                alert('সেভ করার সময় একটি ত্রুটি ঘটেছে: ' + err.message);
+            }
+        });
+
+        function editProject(id) {
+            const projects = AppData.get('projects');
+            const p = projects.find(item => item.id == id);
+            document.getElementById('project-id').value = p.id;
+            document.getElementById('p-title').value = p.title;
+            document.getElementById('p-target').value = p.target;
+            document.getElementById('p-raised').value = p.raised;
+            document.getElementById('p-modal-title').innerText = 'প্রজেক্ট তথ্য এডিট করুন';
+            openModal('project');
+        }
+
+        function deleteProject(id) {
+            const p = AppData.get('projects').find(item => item.id == id);
+            if (confirm('আপনি কি এই প্রজেক্টটি ডিলিট করতে চান?')) {
+                const projects = AppData.get('projects');
+                const filtered = projects.filter(p => p.id != id);
+                AppData.set('projects', filtered);
+                logActivity(`প্রজেক্ট ডিলিট করা হয়েছে: ${p ? p.title : id}`);
+                renderProjects();
+                initDashboard(); // Update stats
+            }
+        }
+
+        // Image Preview and Conversion to Base64
+        function previewImage(input, previewId) {
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+            const container = document.getElementById(previewId + '-container');
+            const hiddenInput = document.getElementById(previewId.split('-')[0] === 'g' ? 'g-image' : 'm-pic');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    hiddenInput.value = e.target.result;
+                    container.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Modal Helpers
+        function openModal(type) {
+            document.getElementById('modal-backdrop').classList.replace('hidden', 'flex');
+            document.getElementById('modal-' + type).classList.remove('hidden');
+        }
+
+        // Dedicated helper to ensure correct folder is selected and locked
+        function openGalleryModalForAdd() {
+            const select = document.getElementById('g-category');
+            if (currentAdminFolder && currentAdminFolder !== 'all') {
+                if (select) {
+                    select.value = currentAdminFolder;
+                    // Disable changing category if adding from within a specific folder
+                    // to prevent accidental clicks
+                    select.style.pointerEvents = 'none';
+                    select.style.opacity = '0.7';
+                    select.parentElement.classList.add('opacity-80');
+                }
+            } else {
+                if (select) {
+                    select.style.pointerEvents = 'auto';
+                    select.style.opacity = '1';
+                    select.parentElement.classList.remove('opacity-80');
+                }
+            }
+            updateDestIndicator();
+            openModal('gallery');
+        }
+
+        function updateDestIndicator() {
+            const select = document.getElementById('g-category');
+            const indicator = document.getElementById('g-dest-indicator');
+            const destName = document.getElementById('g-dest-name');
+
+            if (select && select.value) {
+                const selectedText = select.options[select.selectedIndex].text;
+                destName.innerText = selectedText;
+                indicator.classList.remove('hidden');
+            } else {
+                indicator.classList.add('hidden');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-backdrop').classList.replace('flex', 'hidden');
+            document.querySelectorAll('.modal-box').forEach(b => b.classList.add('hidden'));
+
+            // Full Reset including hidden fields
+            document.getElementById('form-gallery').reset();
+            document.getElementById('form-member').reset();
+            document.getElementById('form-project').reset();
+
+            document.getElementById('gallery-id').value = '';
+            document.getElementById('project-id').value = '';
+            document.getElementById('member-old-id').value = '';
+            document.getElementById('folder-old-id').value = '';
+
+            document.getElementById('m-modal-title').innerText = 'নতুন সদস্য যুক্ত করুন';
+            document.getElementById('p-modal-title').innerText = 'প্রজেক্ট তথ্য যোগ করুন';
+            document.getElementById('g-preview-area').innerHTML = '';
+            document.getElementById('g-preview-area').classList.add('hidden');
+            document.getElementById('m-preview-container').classList.add('hidden');
+            document.getElementById('g-dest-indicator').classList.add('hidden');
+
+            document.getElementById('m-pic-file').value = '';
+            document.getElementById('m-pic').value = '';
+            document.getElementById('m-date').value = '';
+            galleryBuffer = [];
+
+            // Reset select styles
+            const select = document.getElementById('g-category');
+            if (select) {
+                select.style.pointerEvents = 'auto';
+                select.style.opacity = '1';
+                select.parentElement.classList.remove('opacity-80');
+            }
+        }
+
+        // Admin Settings Logic
+        function renderAdminSettings() {
+            const settings = AppData.get('settings');
+            const auth = settings.auth || { username: 'admin', password: '1234', recoveryEmail: 'admin@example.com' };
+            document.getElementById('new-username').value = auth.username;
+            document.getElementById('new-password').value = auth.password;
+            document.getElementById('recovery-email-settings').value = auth.recoveryEmail || '';
+        }
+
+        document.getElementById('admin-auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('new-username').value;
+            const password = document.getElementById('new-password').value;
+            const recoveryEmail = document.getElementById('recovery-email-settings').value;
+
+            let settings = AppData.get('settings');
+            settings.auth = { username, password, recoveryEmail };
+
+            AppData.set('settings', settings);
+            alert('অ্যাডমিন লগইন তথ্য সফলভাবে আপডেট করা হয়েছে!');
+
+            if (AppData.getRemoteUrl()) {
+                await syncCloud();
+            }
+        });
+
+        // Recovery Logic
+        function toggleRecovery(show) {
+            document.querySelector('#login-form').parentElement.classList.toggle('hidden', show);
+            document.getElementById('recovery-box').classList.toggle('hidden', !show);
+        }
+
+        function handleRecovery() {
+            const inputEmail = document.getElementById('recovery-email-input').value;
+            const settings = AppData.get('settings');
+            const auth = settings.auth || { recoveryEmail: 'admin@example.com' };
+
+            if (inputEmail === auth.recoveryEmail) {
+                // Reset to default
+                settings.auth = { ...auth, password: '1234' };
+                AppData.set('settings', settings);
+                alert('ইমেইল ভেরিফাইড! আপনার পাসওয়ার্ড রিসেট করে "1234" করা হয়েছে। দয়া করে লগইন করে পাসওয়ার্ড বদলে নিন।');
+                toggleRecovery(false);
+            } else {
+                alert('ইমেইল মেলেনি! সঠিক রিকভারি ইমেইলটি দিন।');
+            }
+        }
+
+        // Database Cloud Sync Functions
+        function saveCloudUrl() {
+            const url = document.getElementById('cloud-url-input').value;
+            if (url && !url.startsWith('https://script.google.com')) {
+                return alert('অনুগ্রহ করে একটি সঠিক Google Script URL দিন।');
+            }
+            AppData.setRemoteUrl(url);
+            alert('Cloud URL সফলভাবে সেভ হয়েছে!');
+        }
+
+        async function syncCloud(btn = null) {
+            if (!AppData.getRemoteUrl()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> সিঙ্ক হচ্ছে...';
+                btn.disabled = true;
+            }
+
+            try {
+                const result = await AppData.saveToCloud();
+                if (btn) btn.innerHTML = originalText;
+                if (btn) btn.disabled = false;
+                alert(result.message);
+            } catch (e) {
+                if (btn) btn.innerHTML = originalText;
+                if (btn) btn.disabled = false;
+                alert('সেভ করার সময় ত্রুটি: ' + e.message);
+            }
+        }
+
+        async function fetchCloud(btn = null) {
+            if (!AppData.getRemoteUrl()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
+            if (!confirm('ক্লাউড থেকে ডাটা লোড করলে আপনার পিসির বর্তমান আন-সেভড ডাটা মুছে যেতে পারে। আপনি কি নিশ্চিত?')) return;
+
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> লোড হচ্ছে...';
+                btn.disabled = true;
+            }
+
+            try {
+                const result = await AppData.loadFromCloud();
+                if (btn) btn.innerHTML = originalText;
+                if (btn) btn.disabled = false;
+                alert(result.message);
+                if (result.success) location.reload();
+            } catch (e) {
+                if (btn) btn.innerHTML = originalText;
+                if (btn) btn.disabled = false;
+                alert('লোড করার সময় ত্রুটি: ' + e.message);
+            }
+        }
+
+        // Initialize URL input on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('cloud-url-input')) {
+                document.getElementById('cloud-url-input').value = AppData.getRemoteUrl();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            location.reload();
+        }
+
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            loginSection.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+
+            // Auto Load from cloud on entry
+            if (AppData.getRemoteUrl()) {
+                console.log("Auto-loading cloud data...");
+                AppData.loadFromCloud().then(() => {
+                    initDashboard();
+                });
+            } else {
+                initDashboard();
+            }
+        }
+        function renderComplaints() {
+            const container = document.getElementById('complaints-container');
+            const data = AppData.get('complaints') || [];
+
+            document.getElementById('complaint-count-badge').innerText = data.length;
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-12 rounded-[2rem] text-center border border-gray-100">
+                        <i class="fas fa-inbox text-5xl text-gray-200 mb-4 block"></i>
+                        <p class="text-gray-400 font-medium">কোনো অভিযোগ পাওয়া যায়নি।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by latest first
+            const sortedData = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            container.innerHTML = sortedData.map(c => `
+                <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all mb-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-secret"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-gray-800">অজ্ঞাতনামা অভিযোগকারী</h5>
+                                <p class="text-xs text-gray-400 font-medium">${c.date || 'তারিখ পাওয়া যায়নি'}</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteComplaint(${c.id})" class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-all font-bold" title="ডিলিট করুন">
+                            <i class="fas fa-trash-alt"></i> ডিলিট
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">${c.content}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteComplaint(id) {
+            if (confirm('আপনি কি এই অভিযোগটি ডিলিট করতে চান? এটি আর ফিরিয়ে আনা যাবে না।')) {
+                AppData.removeItem('complaints', id);
+                renderComplaints();
+                initDashboard();
+            }
+        }
+    </script>
+</body>
+
+</html>
