@@ -177,11 +177,15 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = data.map((item, index) => `
+                container.innerHTML = data.map((item, index) => {
+                    const imgUrl = AppData.fixImageUrl(item.image);
+                    return `
                     <div class="group relative overflow-hidden rounded-3xl shadow-lg bg-white image-zoom fade-in-up cursor-pointer" 
-                         style="animation-delay: ${index * 0.05}s;" onclick="openLightbox('${item.image}', '${item.title || 'কার্যক্রমের ছবি'}')">
-                        <img src="${item.image}"
-                            alt="${item.title}" class="w-full h-80 object-cover transition duration-700">
+                         style="animation-delay: ${index * 0.05}s;" onclick="openLightbox('${imgUrl}', '${item.title || 'কার্যক্রমের ছবি'}')">
+                        <img src="${imgUrl}"
+                            alt="${item.title}" 
+                            onerror="this.src='https://placehold.co/600x400?text=Broken+Image'"
+                            class="w-full h-80 object-cover transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <p class="text-white font-bold text-lg">${item.title || 'কার্যক্রমের ছবি'}</p>
                         </div>
@@ -191,7 +195,8 @@
                              </div>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             }
 
             // Transition

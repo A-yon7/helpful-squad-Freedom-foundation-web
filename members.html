@@ -211,11 +211,15 @@
             );
 
             if (member) {
+                const imgUrl = AppData.fixImageUrl(member.pic);
                 document.getElementById('mName').innerText = member.name;
                 document.getElementById('mId').innerText = "ID: " + member.id;
                 document.getElementById('mPosition').innerText = member.position;
                 document.getElementById('mDate').innerText = member.date;
-                document.getElementById('mPic').src = member.pic;
+                document.getElementById('mPic').src = imgUrl;
+                document.getElementById('mPic').onerror = function () {
+                    this.src = 'https://i.pravatar.cc/300?img=' + Math.floor(Math.random() * 70);
+                };
 
                 resultCard.style.display = 'block';
                 errorMsg.classList.add('hidden');

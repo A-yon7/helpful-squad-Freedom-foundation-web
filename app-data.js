@@ -103,6 +103,19 @@ const AppData = {
         localStorage.setItem('hsff_cloud_url', url);
     },
 
+    fixImageUrl: function (url) {
+        if (!url) return "";
+        // Google Drive Fix
+        if (url.includes('drive.google.com')) {
+            const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
+            if (match) {
+                const id = match[1];
+                return `https://lh3.googleusercontent.com/u/0/d/${id}`;
+            }
+        }
+        return url;
+    },
+
     get: function (key) {
         const stored = localStorage.getItem('hsff_' + key);
         return (stored && stored !== "undefined") ? JSON.parse(stored) : defaultData[key];
