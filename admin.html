@@ -633,11 +633,18 @@
                 <div class="space-y-4">
                     <div id="upload-mode-container">
                         <label class="flex items-center gap-2 mb-2 cursor-pointer group">
-                            <input type="checkbox" id="g-local-mode" class="w-4 h-4 accent-orange-500">
+                            <input type="checkbox" id="g-local-mode" class="w-4 h-4 accent-orange-500"
+                                onchange="updateLocalPathHint()">
                             <span
                                 class="text-xs font-bold text-gray-700 group-hover:text-orange-600 transition-colors">পিসি
                                 লোকাল মোড (ছবিগুলো আপনাকে ম্যানুয়ালি GitHub-এ আপলোড করতে হবে - আনলিমিটেড)</span>
                         </label>
+                        <div id="local-path-hint"
+                            class="hidden text-[10px] bg-gray-900 text-white p-2 rounded-lg mb-3 font-mono">
+                            <i class="fas fa-info-circle mr-1 text-orange-400"></i> আপনার পিসিতে ছবিগুলো এই পাথে রাখুন:
+                            <br>
+                            <span class="text-orange-300">images/gallery/<span id="local-path-folder">...</span>/</span>
+                        </div>
 
                         <div>
                             <label class="block text-sm font-bold mb-1">ছবি সিলেক্ট করুন</label>
@@ -664,7 +671,10 @@
                     <div>
                         <input type="text" id="g-image-url"
                             class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
-                            placeholder="যেমন: images/gallery/pic1.jpg">
+                            placeholder="যেমন: https://drive.google.com/file/d/xxxxxx/view">
+                        <p class="text-[10px] text-gray-400 mt-1 px-1">গুগল ড্রাইভ ব্যবহার করলে অবশ্যই ছবিটিকে
+                            <b>"Anyone with the link"</b> মুড এ শেয়ার করবেন।
+                        </p>
                     </div>
                 </div>
                 <div class="flex gap-4 pt-4">
@@ -1133,13 +1143,20 @@
                     // Edit mode (Single Item)
                     const gUrl = document.getElementById('g-image-url').value;
                     const gImage = gUrl || galleryBuffer[0] || document.getElementById('g-image-temp-edit')?.value;
+
+                    // Final check for Google Drive links - ensure they are the direct ones
+                    let finalImage = gImage;
+                    if (gUrl && gUrl.includes('drive.google.com') && !gUrl.includes('uc?id=')) {
+                        console.log("Detecting Google Drive non-direct link, will be fixed by fixImageUrl");
+                    }
+
                     const index = currentGallery.findIndex(item => String(item.id) === String(id));
                     if (index !== -1) {
                         currentGallery[index] = {
                             id: parseFloat(id),
                             title,
                             category: finalCategory,
-                            image: gImage
+                            image: finalImage
                         };
                     }
                 } else {
@@ -1148,6 +1165,12 @@
                     const isLocalMode = document.getElementById('g-local-mode').checked;
 
                     if (gUrl) {
+                        // Check for direct link warning
+                        if (gUrl.includes('drive.google.com') && !gUrl.includes('/d/') && !gUrl.includes('id=')) {
+                            alert('গুগল ড্রাইভের লিঙ্কটি সঠিক নয়। দয়া করে সঠিক শেয়ারিং লিঙ্ক দিন।');
+                            return;
+                        }
+
                         currentGallery.push({
                             id: Date.now() + Math.random(),
                             title,
@@ -1156,8 +1179,9 @@
                         });
                     } else if (isLocalMode) {
                         const files = Array.from(document.getElementById('g-image-file').files);
-                        const catMap = AppData.getCategoryMap();
-                        const folderName = catMap[finalCategory] || finalCategory;
+                        if (files.length === 0) return alert('কোনো ফাইল সিলেক্ট করা হয়নি');
+
+                        const folderName = finalCategory;
 
                         files.forEach((file, i) => {
                             currentGallery.push({
@@ -1181,10 +1205,10 @@
                         }
                     }
 
-                    // Final verification of newly added items
-                    const recentThreshold = Date.now() - 30000;
+                    // Final verification to ensure every item just added has the correct category
+                    const recentThreshold = Date.now() - 60000;
                     currentGallery.forEach(item => {
-                        if (item.id > recentThreshold) {
+                        if (item.id > recentThreshold && !item.category) {
                             item.category = finalCategory;
                         }
                     });
@@ -1529,8 +1553,23 @@
                 const selectedText = select.options[select.selectedIndex].text;
                 destName.innerText = selectedText;
                 indicator.classList.remove('hidden');
+                updateLocalPathHint(); // Update hint when category changes
             } else {
                 indicator.classList.add('hidden');
+            }
+        }
+
+        function updateLocalPathHint() {
+            const select = document.getElementById('g-category');
+            const localMode = document.getElementById('g-local-mode');
+            const hint = document.getElementById('local-path-hint');
+            const folderSpan = document.getElementById('local-path-folder');
+
+            if (localMode.checked && select.value) {
+                folderSpan.innerText = select.value;
+                hint.classList.remove('hidden');
+            } else {
+                hint.classList.add('hidden');
             }
         }
 

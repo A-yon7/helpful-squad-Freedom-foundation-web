@@ -6,19 +6,19 @@ const defaultData = {
             id: 1,
             title: "ত্রাণ বিতরণ কার্যক্রম",
             category: "relief",
-            image: "images/gallery/ত্রাণ বিতরণ কার্যক্রম/relief.jpg"
+            image: "images/gallery/relief/relief.jpg"
         },
         {
             id: 2,
             title: "খাদ্য সহায়তা প্রকল্প",
             category: "food",
-            image: "images/gallery/খাদ্য সহায়তা প্রকল্প/food.jpg"
+            image: "images/gallery/food/food.jpg"
         },
         {
             id: 3,
             title: "যেকোনো মূল্যের খাবার",
             category: "any_food",
-            image: "images/gallery/যেকোনো মূল্যের খাবার/any_food.jpg"
+            image: "images/gallery/any_food/any_food.jpg"
         }
     ],
     members: [
@@ -105,14 +105,33 @@ const AppData = {
 
     fixImageUrl: function (url) {
         if (!url) return "";
+
+        // Fix Bengali folder names to English equivalents (legacy support)
+        const replacements = {
+            "খাদ্য সহায়তা প্রকল্প": "food",
+            "ত্রাণ বিতরণ কার্যক্রম": "relief",
+            "যেকোনো মূল্যের খাবার": "any_food"
+        };
+        Object.keys(replacements).forEach(key => {
+            url = url.replace(new RegExp(key, 'g'), replacements[key]);
+        });
+
         // Google Drive Fix
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             if (match) {
                 const id = match[1];
-                return `https://lh3.googleusercontent.com/u/0/d/${id}`;
+                // Using a more universal Google Drive image host (lh3 without /u/0/)
+                return `https://lh3.googleusercontent.com/d/${id}`;
             }
         }
+
+        // Handle local paths with possible spaces or Bengali characters
+        if (url.startsWith('images/') && !url.includes('%')) {
+            // Encode spaces and special characters for local filesystem paths
+            return encodeURI(url);
+        }
+
         return url;
     },
 
