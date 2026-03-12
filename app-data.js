@@ -186,13 +186,13 @@ const AppData = {
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                mode: 'no-cors', // Apps Script requires this for simple POST
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(fullData)
             });
-            return { success: true, message: "ক্লাউডে সেভ হয়েছে!" };
+            return { success: true, message: "সফলভাবে ক্লাউডে ব্যাকআপ নেওয়া হয়েছে!" };
         } catch (err) {
-            return { success: false, message: "সেভ ব্যর্থ হয়েছে: " + err.message };
+            console.error("Backup Fail:", err);
+            return { success: false, message: "ক্লাউড ব্যাকআপ ব্যর্থ হয়েছে! আপনার স্ক্রিপ্ট পারমিশন চেক করুন।" };
         }
     },
 
