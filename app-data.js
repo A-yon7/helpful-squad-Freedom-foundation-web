@@ -103,6 +103,15 @@ const AppData = {
         localStorage.setItem('hsff_cloud_url', url);
     },
 
+    getFirebaseConfig: function() {
+        const config = localStorage.getItem('hsff_firebase_config');
+        return config ? JSON.parse(config) : null;
+    },
+
+    setFirebaseConfig: function(config) {
+        localStorage.setItem('hsff_firebase_config', JSON.stringify(config));
+    },
+
     fixImageUrl: function (url) {
         if (!url) return "";
 
@@ -169,11 +178,8 @@ const AppData = {
 
     // পুরো ডাটা ক্লাউডে সেভ করার ফাংশন
     saveToCloud: async function () {
-        const url = this.getRemoteUrl();
-        if (!url) return { success: false, message: "Cloud URL নট ফাউন্ড!" };
-
         const fullData = {
-            lastUpdated: this.get('lastUpdated'),
+            lastUpdated: Date.now(),
             gallery: this.get('gallery'),
             members: this.get('members'),
             donations: this.get('donations'),
@@ -182,6 +188,25 @@ const AppData = {
             complaints: this.get('complaints'),
             categories: this.get('categories')
         };
+
+        // Firebase Sync (If configured)
+        const fbConfig = this.getFirebaseConfig();
+        if (fbConfig && fbConfig.databaseURL) {
+            try {
+                const url = `${fbConfig.databaseURL}/data.json`;
+                const response = await fetch(url, {
+                    method: 'PUT', // Firebase use PUT for overwrite
+                    body: JSON.stringify(fullData)
+                });
+                if (response.ok) return { success: true, message: "Firebase-এ সফলভাবে সেভ হয়েছে!" };
+            } catch (err) {
+                console.error("Firebase Save Error:", err);
+            }
+        }
+
+        // Fallback to Google Script
+        const url = this.getRemoteUrl();
+        if (!url) return { success: false, message: "কোনো ডাটাবেস ইউআরএল পাওয়া যায়নি!" };
 
         try {
             const response = await fetch(url, {
@@ -192,38 +217,48 @@ const AppData = {
             return { success: true, message: "সফলভাবে ক্লাউডে ব্যাকআপ নেওয়া হয়েছে!" };
         } catch (err) {
             console.error("Backup Fail:", err);
-            return { success: false, message: "ক্লাউড ব্যাকআপ ব্যর্থ হয়েছে! আপনার স্ক্রিপ্ট পারমিশন চেক করুন।" };
+            return { success: false, message: "ব্যাকআপ ব্যর্থ! গুগল স্ক্রিপ্টে পারমিশন সমস্যা বা ফায়ারবেস সেটআপ নেই।" };
         }
     },
 
     // ক্লাউড থেকে ডাটা নিয়ে আসার ফাংশন
     loadFromCloud: async function (force = false) {
-        const url = this.getRemoteUrl();
-        if (!url) return { success: false, message: "Cloud URL পাওয়া যায়নি!" };
+        let cloudData = null;
 
-        try {
-            const response = await fetch(url);
-            const cloudData = await response.json();
-
-            if (cloudData && typeof cloudData === 'object') {
-                const localTS = this.get('lastUpdated') || 0;
-                const cloudTS = cloudData.lastUpdated || 0;
-
-                // Only overwrite if cloud data is newer or forced
-                if (!force && cloudTS <= localTS && localTS !== 0) {
-                    console.log("Local data is up to date or newer. Skipping load.");
-                    return { success: true, message: "লোকাল ডাটা ব্যবহার করা হচ্ছে।" };
-                }
-
-                Object.keys(cloudData).forEach(key => {
-                    this.set(key, cloudData[key], false); // Don't update timestamp when loading from cloud
-                });
-                return { success: true, message: "ডাটাবেস আপডেট হয়েছে!" };
-            }
-            return { success: false, message: "ক্লাউড থেকে ভুল ডাটা পাওয়া গেছে।" };
-        } catch (err) {
-            console.error("Cloud load error:", err);
-            return { success: false, message: "লোড ব্যর্থ হয়েছে: " + err.message };
+        // Try Firebase first
+        const fbConfig = this.getFirebaseConfig();
+        if (fbConfig && fbConfig.databaseURL) {
+            try {
+                const response = await fetch(`${fbConfig.databaseURL}/data.json`);
+                cloudData = await response.json();
+            } catch (err) { console.error("Firebase Load Error:", err); }
         }
+
+        // If not successful with Firebase, try Google Script
+        if (!cloudData) {
+            const url = this.getRemoteUrl();
+            if (url) {
+                try {
+                    const response = await fetch(url);
+                    cloudData = await response.json();
+                } catch (err) { console.error("GAS Load Error:", err); }
+            }
+        }
+
+        if (cloudData && typeof cloudData === 'object') {
+            const localTS = this.get('lastUpdated') || 0;
+            const cloudTS = cloudData.lastUpdated || 0;
+
+            if (!force && cloudTS <= localTS && localTS !== 0) {
+                console.log("Local data is up to date.");
+                return { success: true, message: "লোকাল ডাটা ব্যবহার করা হচ্ছে।" };
+            }
+
+            Object.keys(cloudData).forEach(key => {
+                this.set(key, cloudData[key], false);
+            });
+            return { success: true, message: "ডাটাবেস সফলভাবে আপডেট হয়েছে!" };
+        }
+        return { success: false, message: "ক্লাউড থেকে ডাটা পাওয়া যায়নি।" };
     }
 };

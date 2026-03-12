@@ -444,7 +444,7 @@
                                 <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">প্রজেক্টের নাম</th>
                                 <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">টার্গেট</th>
                                 <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">সংগৃহীত</th>
-                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">অগ্রগতি %</th>
+                                <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">প্রগতি %</th>
                                 <th class="px-8 py-5 font-bold text-gray-600 whitespace-nowrap">অ্যাকশন</th>
                             </tr>
                         </thead>
@@ -453,75 +453,58 @@
                         </tbody>
                     </table>
                 </div>
-
                 <!-- Project Section Notice Settings -->
-                <div class="mt-12 bg-orange-50/50 p-8 rounded-[2rem] border border-orange-100">
-                    <h5 class="text-lg font-bold mb-4 text-orange-800"><i class="fas fa-bullhorn mr-2"></i> প্রজেক্ট
-                        সেকশন নোটিশ (ঐচ্ছিক)</h5>
-                    <p class="text-sm text-gray-500 mb-4">যদি বর্তমানে কোনো প্রজেক্ট না থাকে বা আপনি ভিজিটরদের কোনো
-                        মেসেজ দেখাতে চান (যেমন: "বর্তমানে কোনো প্রকল্প নিয়ে কাজ করা হচ্ছে না"), তবে এখানে লিখুন। এটি
-                        লিখলে প্রজেক্ট লিস্টের বদলে এই মেসেজটি হোম পেজে দেখাবে।</p>
-                    <div class="flex flex-col md:flex-row gap-4 text-left">
-                        <textarea id="project-notice-text"
-                            class="flex-1 px-5 py-4 rounded-xl border border-gray-100 bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all resize-none font-medium"
-                            placeholder="এখানে আপনার মেসেজটি লিখুন..." rows="2"></textarea>
-                        <button onclick="saveProjectNotice()"
-                            class="bg-orange-theme text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition-all self-start shadow-lg shadow-orange-500/20">
-                            নোটিশ সেভ করুন
-                        </button>
+                <div class="mt-8 bg-orange-50/50 p-8 rounded-[2rem] border border-orange-100 text-left">
+                    <h5 class="text-lg font-bold mb-4 text-orange-800"><i class="fas fa-bullhorn mr-2"></i> নোটিশ সেটিংস</h5>
+                    <p class="text-sm text-gray-500 mb-4">হোমপেজে প্রজেক্ট লিস্টের বদলে যদি কোনো বিশেষ ঘোষণা দেখাতে চান, তবে এখানে লিখুন।</p>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <textarea id="project-notice-text" class="flex-1 px-5 py-4 rounded-xl border border-gray-100 bg-white outline-none transition-all resize-none font-medium" placeholder="যেমন: বর্তমানে কোনো কার্যক্রম চলছে না..." rows="2"></textarea>
+                        <button onclick="saveProjectNotice()" class="bg-orange-theme text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition-all">Save Notice</button>
                     </div>
                 </div>
             </div>
 
             <!-- Database Settings Tab -->
             <div id="db-settings" class="tab-content hidden transition-all duration-300">
-                <div class="max-w-2xl bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm mx-auto">
-                    <div
-                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-3xl mb-8 mx-auto">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4 text-center">ক্লাউড ডাটাবেস কানেক্ট করুন</h4>
-                    <p class="text-gray-500 text-center mb-8">আপনার গুগল শিটের 'Web App URL' টি এখানে দিন যাতে ডাটা
-                        আজীবনের জন্য সুরক্ষিত থাকে এবং সবাই দেখতে পায়।</p>
-
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-bold mb-2 ml-1 text-gray-700">Google Apps Script
-                                URL</label>
-                            <input type="url" id="cloud-url-input"
-                                class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all font-mono text-sm"
-                                placeholder="https://script.google.com/macros/s/.../exec">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <!-- Option 1: GAS -->
+                    <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm text-left">
+                        <div class="w-16 h-16 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-2xl mb-6 mx-auto">
+                            <i class="fas fa-cloud-upload-alt"></i>
                         </div>
-                        <div class="flex flex-col gap-4">
-                            <button onclick="saveCloudUrl()"
-                                class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-all">ইউআরএল
-                                সেভ করুন</button>
-
-                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50">
-                                <button onclick="fetchCloud(this)"
-                                    class="flex items-center justify-center gap-2 bg-blue-50 text-blue-600 py-4 rounded-xl font-bold hover:bg-blue-100 transition-all border border-blue-100">
-                                    <i class="fas fa-download"></i> ক্লাউড থেকে লোড
-                                </button>
-                                <button onclick="syncCloud(this)"
-                                    class="flex items-center justify-center gap-2 bg-orange-theme text-white py-4 rounded-xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20">
-                                    <i class="fas fa-upload"></i> ক্লাউডে ব্যাকআপ
-                                </button>
+                        <h4 class="text-xl font-bold mb-2 text-center text-gray-800">Option 1: Google Script</h4>
+                        <p class="text-gray-400 text-center text-xs mb-8 uppercase tracking-widest font-bold">legacy connection</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1 ml-1 text-gray-400">Google Script URL</label>
+                                <input type="url" id="cloud-url-input" class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 outline-none font-mono text-xs" placeholder="https://script.google.com/macros/s/.../exec">
+                            </div>
+                            <button onclick="saveCloudUrl()" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold">Save URL</button>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="fetchCloud(this)" class="bg-blue-50 text-blue-600 py-3 rounded-xl font-bold text-xs"><i class="fas fa-download mr-1"></i> Sync Load</button>
+                                <button onclick="syncCloud(this)" class="bg-orange-theme text-white py-3 rounded-xl font-bold text-xs"><i class="fas fa-upload mr-1"></i> Sync Backup</button>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mt-12 max-w-2xl mx-auto p-8 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-                    <h5 class="font-bold text-gray-700 mb-3"><i class="fas fa-info-circle mr-2"></i> কিভাবে কানেক্ট
-                        করবেন?</h5>
-                    <ol class="text-sm text-gray-500 space-y-2 list-decimal ml-5">
-                        <li>একটি গুগল শিট খুলুন।</li>
-                        <li><b>Extensions > Apps Script</b>-এ যান।</li>
-                        <li>পুরানো কোড মুছে দিয়ে আমার দেওয়া কোডটি পেস্ট করুন।</li>
-                        <li><b>Deploy > New Deployment</b> এ গিয়ে 'Who has access' এ **'Anyone'** দিয়ে ডিপ্লয় করুন।
-                        </li>
-                        <li>URL টি কপি করে এখানে পেস্ট করুন।</li>
-                    </ol>
+                    <!-- Option 2: Firebase -->
+                    <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm text-left">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-2xl mb-6 mx-auto">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2 text-center text-gray-800">Option 2: Firebase</h4>
+                        <p class="text-gray-400 text-center text-xs mb-8 uppercase tracking-widest font-bold">Recommended Solution</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1 ml-1 text-gray-400">Firebase Database URL</label>
+                                <input type="url" id="fb-db-url" class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 outline-none font-mono text-xs" placeholder="https://your-proj.firebaseio.com">
+                            </div>
+                            <button onclick="saveFirebaseSettings()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all">Connect Firebase</button>
+                            <div class="bg-blue-50 p-4 rounded-2xl">
+                                <p class="text-[10px] text-blue-700 leading-relaxed font-bold"><i class="fas fa-info-circle mr-1"></i> ফায়ারবেস ব্যবহার করলে ছবির লিমিট বা পারমিশন সমস্যা আর হবে না। এটি অত্যন্ত সুপার ফাস্ট।</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1766,12 +1749,26 @@
                 document.getElementById('cloud-url-input').value = AppData.getRemoteUrl();
             }
 
-            // Also auto-load from cloud on page load if URL exists (to update auth etc)
-            if (AppData.getRemoteUrl()) {
-                console.log("Pre-fetching cloud data for login updates...");
+            const fbConfig = AppData.getFirebaseConfig();
+            if (fbConfig && document.getElementById('fb-db-url')) {
+                document.getElementById('fb-db-url').value = fbConfig.databaseURL || "";
+            }
+
+            // Also auto-load from cloud on page load if URL exists
+            if (AppData.getRemoteUrl() || (fbConfig && fbConfig.databaseURL)) {
+                console.log("Pre-fetching cloud data...");
                 await AppData.loadFromCloud();
             }
         });
+
+        function saveFirebaseSettings() {
+            const url = document.getElementById('fb-db-url').value;
+            if (url && !url.startsWith('https://')) {
+                return alert('অনুগ্রহ করে একটি সঠিক Firebase URL দিন।');
+            }
+            AppData.setFirebaseConfig({ databaseURL: url });
+            alert('Firebase সেটিংস সফলভাবে সেভ হয়েছে!');
+        }
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
