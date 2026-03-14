@@ -94,15 +94,6 @@ const AppData = {
         cats.forEach(c => map[c.id] = c.name);
         return map;
     },
-    // এখানে আপনার গুগল শিটের 'Web App URL' টি সেভ হবে
-    getRemoteUrl: function () {
-        return localStorage.getItem('hsff_cloud_url') || "https://script.google.com/macros/s/AKfycbzburnt8a8wnTqYpAeuf4P6cXXeM2IeEluUjbEaNOc9GvyB5TNUnDM1niL4_cZdUYrL/exec";
-    },
-
-    setRemoteUrl: function (url) {
-        localStorage.setItem('hsff_cloud_url', url);
-    },
-
     getFirebaseConfig: function() {
         const config = localStorage.getItem('hsff_firebase_config');
         return config ? JSON.parse(config) : null;
@@ -201,23 +192,10 @@ const AppData = {
                 if (response.ok) return { success: true, message: "Firebase-এ সফলভাবে সেভ হয়েছে!" };
             } catch (err) {
                 console.error("Firebase Save Error:", err);
+                return { success: false, message: "ফায়ারবেসে ব্যাকআপ ব্যর্থ! (" + err.message + ")" };
             }
-        }
-
-        // Fallback to Google Script
-        const url = this.getRemoteUrl();
-        if (!url) return { success: false, message: "কোনো ডাটাবেস ইউআরএল পাওয়া যায়নি!" };
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(fullData)
-            });
-            return { success: true, message: "সফলভাবে ক্লাউডে ব্যাকআপ নেওয়া হয়েছে!" };
-        } catch (err) {
-            console.error("Backup Fail:", err);
-            return { success: false, message: "ব্যাকআপ ব্যর্থ! গুগল স্ক্রিপ্টে পারমিশন সমস্যা বা ফায়ারবেস সেটআপ নেই।" };
+        } else {
+            return { success: false, message: "কোনো ফায়ারবেস ডাটাবেস ইউআরএল পাওয়া যায়নি!" };
         }
     },
 
@@ -232,19 +210,6 @@ const AppData = {
                 const response = await fetch(`${fbConfig.databaseURL}/data.json?t=${Date.now()}`);
                 cloudData = await response.json();
             } catch (err) { console.error("Firebase Load Error:", err); }
-        }
-
-        // If not successful with Firebase, try Google Script
-        if (!cloudData) {
-            const url = this.getRemoteUrl();
-            if (url) {
-                try {
-                    // Cache busting to ensure we get the latest
-                    const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
-                    const response = await fetch(fetchUrl);
-                    cloudData = await response.json();
-                } catch (err) { console.error("GAS Load Error:", err); }
-            }
         }
 
         if (cloudData && typeof cloudData === 'object') {

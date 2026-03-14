@@ -221,7 +221,7 @@
             AppData.addItem('complaints', complaint);
 
             // Sync with cloud if URL exists
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 await AppData.saveToCloud();
             }
 
@@ -240,7 +240,7 @@
 
         // Auto Load from Database
         window.addEventListener('DOMContentLoaded', async () => {
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 await AppData.loadFromCloud();
             }
         });

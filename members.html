@@ -245,7 +245,7 @@
 
         // Auto Load from Database
         window.addEventListener('DOMContentLoaded', async () => {
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 await AppData.loadFromCloud();
             }
         });

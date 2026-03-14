@@ -155,8 +155,7 @@
                 <a href="donate.html"
                     class="bg-orange-theme px-12 py-4 rounded-2xl text-lg font-bold hover:bg-orange-600 hover:scale-105 transition-all shadow-2xl shadow-orange-500/40">ডোনেট
                     করুন</a>
-                <a href="https://forms.gle/J2Y35Xoxpb9krtkm7"
-                    target="_blank"
+                <a href="https://forms.gle/5t2xceTooLV84bbz6" target="_blank"
                     class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-12 py-4 rounded-2xl text-lg font-bold hover:bg-white/20 transition-all">সদস্য
                     ফরম</a>
             </div>
@@ -401,7 +400,7 @@
 
         // Auto Load from Database
         window.addEventListener('DOMContentLoaded', async () => {
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 await AppData.loadFromCloud();
             }
             if (typeof renderProjects === 'function') renderProjects();
@@ -409,7 +408,4 @@
     </script>
 </body>
 
-
 </html>
-
-

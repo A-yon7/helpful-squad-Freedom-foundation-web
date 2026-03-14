@@ -136,15 +136,15 @@
                     class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
                     <i class="fas fa-database"></i>
                 </div>
-                <h2 class="text-2xl font-bold mb-2">ডাটাবেস কানেকশন</h2>
-                <p class="text-gray-500 text-sm">নতুন ব্রাউজার হলে আগে ক্লাউড ইউআরএল সেট করে ডাটা নিয়ে নিন</p>
+                <h2 class="text-2xl font-bold mb-2">ফায়ারবেস ডাটাবেস</h2>
+                <p class="text-gray-500 text-sm">নতুন ব্রাউজার হলে ডাটাবেস লিংক যুক্ত করে ডাটা সিঙ্ক করুন</p>
             </div>
             <div class="space-y-6">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2 ml-1">Google Script URL</label>
-                    <input type="text" id="login-cloud-url"
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 ml-1">Firebase Database URL</label>
+                    <input type="url" id="login-cloud-url"
                         class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white outline-none text-xs font-mono"
-                        placeholder="https://script.google.com/macros/s/.../exec">
+                        placeholder="https://your-proj.firebaseio.com">
                 </div>
                 <button onclick="syncAndLogin(event)"
                     class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3">
@@ -466,42 +466,23 @@
 
             <!-- Database Settings Tab -->
             <div id="db-settings" class="tab-content hidden transition-all duration-300">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    <!-- Option 1: GAS -->
-                    <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm text-left">
-                        <div class="w-16 h-16 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-2xl mb-6 mx-auto">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <h4 class="text-xl font-bold mb-2 text-center text-gray-800">Option 1: Google Script</h4>
-                        <p class="text-gray-400 text-center text-xs mb-8 uppercase tracking-widest font-bold">legacy connection</p>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold mb-1 ml-1 text-gray-400">Google Script URL</label>
-                                <input type="url" id="cloud-url-input" class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 outline-none font-mono text-xs" placeholder="https://script.google.com/macros/s/.../exec">
-                            </div>
-                            <button onclick="saveCloudUrl()" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold">Save URL</button>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="fetchCloud(this)" class="bg-blue-50 text-blue-600 py-3 rounded-xl font-bold text-xs"><i class="fas fa-download mr-1"></i> Sync Load</button>
-                                <button onclick="syncCloud(this)" class="bg-orange-theme text-white py-3 rounded-xl font-bold text-xs"><i class="fas fa-upload mr-1"></i> Sync Backup</button>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-md mx-auto">
                     <!-- Option 2: Firebase -->
                     <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm text-left">
                         <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-2xl mb-6 mx-auto">
                             <i class="fas fa-fire"></i>
                         </div>
-                        <h4 class="text-xl font-bold mb-2 text-center text-gray-800">Option 2: Firebase</h4>
-                        <p class="text-gray-400 text-center text-xs mb-8 uppercase tracking-widest font-bold">Recommended Solution</p>
+                        <h4 class="text-xl font-bold mb-2 text-center text-gray-800">ফায়ারবেস ডাটাবেস</h4>
+                        <p class="text-gray-400 text-center text-xs mb-8 uppercase tracking-widest font-bold">Primary Database</p>
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold mb-1 ml-1 text-gray-400">Firebase Database URL</label>
                                 <input type="url" id="fb-db-url" class="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 outline-none font-mono text-xs" placeholder="https://your-proj.firebaseio.com">
                             </div>
                             <button onclick="saveFirebaseSettings()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all">Connect Firebase</button>
-                            <div class="bg-blue-50 p-4 rounded-2xl">
-                                <p class="text-[10px] text-blue-700 leading-relaxed font-bold"><i class="fas fa-info-circle mr-1"></i> ফায়ারবেস ব্যবহার করলে ছবির লিমিট বা পারমিশন সমস্যা আর হবে না। এটি অত্যন্ত সুপার ফাস্ট।</p>
+                            <div class="grid grid-cols-2 gap-3 mt-4">
+                                <button onclick="fetchCloud(this)" class="bg-blue-50 text-blue-600 py-3 rounded-xl font-bold text-xs"><i class="fas fa-download mr-1"></i> Sync Load</button>
+                                <button onclick="syncCloud(this)" class="bg-orange-theme text-white py-3 rounded-xl font-bold text-xs"><i class="fas fa-upload mr-1"></i> Sync Backup</button>
                             </div>
                         </div>
                     </div>
@@ -1211,7 +1192,7 @@
 
                 // Final Sync
                 btn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> ক্লাউড সিঙ্ক হচ্ছে...`;
-                if (AppData.getRemoteUrl()) {
+                if (AppData.getFirebaseConfig()) {
                     const saveRes = await AppData.saveToCloud();
                     if (saveRes && saveRes.success === false) {
                         alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + saveRes.message);
@@ -1251,7 +1232,7 @@
             if (confirm('আপনি কি নিশ্চিত যে এটি সোশ্যাল ওয়েবসাইট থেকে ডিলিট করতে চান?')) {
                 AppData.removeItem('gallery', id);
 
-                if (AppData.getRemoteUrl()) {
+                if (AppData.getFirebaseConfig()) {
                     AppData.saveToCloud();
                 }
 
@@ -1325,7 +1306,7 @@
             AppData.addItem('members', newMember);
             logActivity(`${oldId ? 'সদস্যের তথ্য আপডেট' : 'নতুন সদস্য যোগ'} করা হয়েছে: ${newMember.name}`);
 
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 const res = await AppData.saveToCloud();
                 if (res && res.success === false) alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + res.message);
             }
@@ -1341,7 +1322,7 @@
                 AppData.removeItem('members', id);
                 logActivity(`সদস্য রিমুভ করা হয়েছে: ${m ? m.name : id}`);
 
-                if (AppData.getRemoteUrl()) {
+                if (AppData.getFirebaseConfig()) {
                     AppData.saveToCloud();
                 }
 
@@ -1455,7 +1436,7 @@
                 AppData.set('projects', projects);
                 logActivity(`${idValue ? 'প্রজেক্ট আপডেট' : 'নতুন প্রজেক্ট'} করা হয়েছে: ${title}`);
 
-                if (AppData.getRemoteUrl()) {
+                if (AppData.getFirebaseConfig()) {
                     const res = await AppData.saveToCloud();
                     if (res && res.success === false) alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + res.message);
                 }
@@ -1489,6 +1470,10 @@
                 const filtered = projects.filter(p => p.id != id);
                 AppData.set('projects', filtered);
                 logActivity(`প্রজেক্ট ডিলিট করা হয়েছে: ${p ? p.title : id}`);
+                if (AppData.getFirebaseConfig()) {
+                    AppData.saveToCloud();
+                }
+
                 renderProjects();
                 initDashboard(); // Update stats
             }
@@ -1626,7 +1611,7 @@
             AppData.set('settings', settings);
             alert('অ্যাডমিন লগইন তথ্য সফলভাবে আপডেট করা হয়েছে!');
 
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 await syncCloud();
             }
         });
@@ -1643,15 +1628,18 @@
             document.getElementById('cloud-config-box').classList.toggle('hidden', !show);
             document.getElementById('recovery-box').classList.add('hidden');
             if (show) {
-                document.getElementById('login-cloud-url').value = AppData.getRemoteUrl();
+                const fbConfig = AppData.getFirebaseConfig();
+                if (fbConfig) {
+                    document.getElementById('login-cloud-url').value = fbConfig.databaseURL || "";
+                }
             }
         }
 
         async function syncAndLogin(e) {
             const url = document.getElementById('login-cloud-url').value;
-            if (!url) return alert('অনুগ্রহ করে আপনার Google Script URL দিন।');
-            if (!url.startsWith('https://script.google.com')) {
-                return alert('অনুগ্রহ করে একটি সঠিক Google Script URL দিন।');
+            if (!url) return alert('অনুগ্রহ করে আপনার Firebase URL দিন।');
+            if (!url.startsWith('https://')) {
+                return alert('অনুগ্রহ করে একটি সঠিক Firebase URL দিন।');
             }
 
             const btn = e ? e.currentTarget : null;
@@ -1662,14 +1650,14 @@
             }
 
             try {
-                AppData.setRemoteUrl(url);
+                AppData.setFirebaseConfig({ databaseURL: url });
                 const result = await AppData.loadFromCloud(true);
 
                 if (result.success) {
                     alert('সফলভাবে ক্লাউড থেকে ডাটা সিঙ্ক হয়েছে! এখন আপনার বর্তমান অ্যাডমিন তথ্য দিয়ে লগইন করতে পারবেন।');
                     toggleCloudConfig(false);
                 } else {
-                    alert('সিঙ্ক ব্যর্থ হয়েছে! কারণ: ' + result.message + '\n\nনোট: নিশ্চিত করুন আপনার Google Script URL-টি সঠিক এবং এটি "Anyone" এর জন্য সহজলভ্য।');
+                    alert('সিঙ্ক ব্যর্থ হয়েছে! কারণ: ' + result.message + '\n\nনোট: নিশ্চিত করুন আপনার Firebase URL-টি সঠিক।');
                 }
             } catch (e) {
                 alert('সিঙ্ক ব্যর্থ হয়েছে: ' + e.message);
@@ -1700,17 +1688,10 @@
         }
 
         // Database Cloud Sync Functions
-        function saveCloudUrl() {
-            const url = document.getElementById('cloud-url-input').value;
-            if (url && !url.startsWith('https://script.google.com')) {
-                return alert('অনুগ্রহ করে একটি সঠিক Google Script URL দিন।');
-            }
-            AppData.setRemoteUrl(url);
-            alert('Cloud URL সফলভাবে সেভ হয়েছে!');
-        }
+        // Removed saveCloudUrl as we are purely Firebase now
 
         async function syncCloud(btn = null) {
-            if (!AppData.getRemoteUrl()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
+            if (!AppData.getFirebaseConfig()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
             const originalText = btn ? btn.innerHTML : '';
             if (btn) {
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> সিঙ্ক হচ্ছে...';
@@ -1730,7 +1711,7 @@
         }
 
         async function fetchCloud(btn = null) {
-            if (!AppData.getRemoteUrl()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
+            if (!AppData.getFirebaseConfig()) return alert('আগে ডাটাবেস ইউআরএল সেভ করুন!');
             if (!confirm('ক্লাউড থেকে ডাটা লোড করলে আপনার পিসির বর্তমান আন-সেভড ডাটা মুছে যেতে পারে। আপনি কি নিশ্চিত?')) return;
 
             const originalText = btn ? btn.innerHTML : '';
@@ -1754,17 +1735,13 @@
 
         // Initialize URL input on load
         document.addEventListener('DOMContentLoaded', async () => {
-            if (document.getElementById('cloud-url-input')) {
-                document.getElementById('cloud-url-input').value = AppData.getRemoteUrl();
-            }
-
             const fbConfig = AppData.getFirebaseConfig();
             if (fbConfig && document.getElementById('fb-db-url')) {
                 document.getElementById('fb-db-url').value = fbConfig.databaseURL || "";
             }
 
             // Also auto-load from cloud on page load if URL exists
-            if (AppData.getRemoteUrl() || (fbConfig && fbConfig.databaseURL)) {
+            if (fbConfig && fbConfig.databaseURL) {
                 console.log("Pre-fetching cloud data...");
                 await AppData.loadFromCloud();
             }
@@ -1789,7 +1766,7 @@
             dashboard.classList.remove('hidden');
 
             // Auto Load from cloud on entry
-            if (AppData.getRemoteUrl()) {
+            if (AppData.getFirebaseConfig()) {
                 console.log("Auto-loading cloud data...");
                 AppData.loadFromCloud().then(() => {
                     initDashboard();
