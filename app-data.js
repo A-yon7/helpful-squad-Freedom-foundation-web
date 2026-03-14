@@ -95,8 +95,12 @@ const AppData = {
         return map;
     },
     getFirebaseConfig: function() {
-        const config = localStorage.getItem('hsff_firebase_config');
-        return config ? JSON.parse(config) : null;
+        const configStr = localStorage.getItem('hsff_firebase_config');
+        if (configStr) {
+            return JSON.parse(configStr);
+        }
+        // Default URL for live website users
+        return { databaseURL: "https://hsff-website-default-rtdb.firebaseio.com" };
     },
 
     setFirebaseConfig: function(config) {
