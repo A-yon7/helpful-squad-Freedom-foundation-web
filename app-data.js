@@ -229,7 +229,7 @@ const AppData = {
         const fbConfig = this.getFirebaseConfig();
         if (fbConfig && fbConfig.databaseURL) {
             try {
-                const response = await fetch(`${fbConfig.databaseURL}/data.json`);
+                const response = await fetch(`${fbConfig.databaseURL}/data.json?t=${Date.now()}`);
                 cloudData = await response.json();
             } catch (err) { console.error("Firebase Load Error:", err); }
         }
@@ -239,7 +239,9 @@ const AppData = {
             const url = this.getRemoteUrl();
             if (url) {
                 try {
-                    const response = await fetch(url);
+                    // Cache busting to ensure we get the latest
+                    const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                    const response = await fetch(fetchUrl);
                     cloudData = await response.json();
                 } catch (err) { console.error("GAS Load Error:", err); }
             }

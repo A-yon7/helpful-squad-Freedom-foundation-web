@@ -1018,7 +1018,9 @@
             }
 
             AppData.set('categories', folders);
-            AppData.saveToCloud();
+            AppData.saveToCloud().then(res => {
+                if (res && res.success === false) alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + res.message);
+            });
             closeModal();
             renderGalleryFolders();
             initDashboard(); // Update counts
@@ -1039,7 +1041,9 @@
                 AppData.set('gallery', filteredGallery);
 
                 logActivity(`ফোল্ডার ডিলিট করা হয়েছে: ${folder.name}`);
-                AppData.saveToCloud();
+                AppData.saveToCloud().then(res => {
+                    if (res && res.success === false) alert('সতর্কতা: ক্লাউডে ডিলিট সেভ করা ব্যর্থ হয়েছে! ' + res.message);
+                });
                 renderGalleryFolders();
             }
         }
@@ -1208,7 +1212,10 @@
                 // Final Sync
                 btn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> ক্লাউড সিঙ্ক হচ্ছে...`;
                 if (AppData.getRemoteUrl()) {
-                    await AppData.saveToCloud();
+                    const saveRes = await AppData.saveToCloud();
+                    if (saveRes && saveRes.success === false) {
+                        alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + saveRes.message);
+                    }
                 }
 
                 // Custom success logging
@@ -1319,7 +1326,8 @@
             logActivity(`${oldId ? 'সদস্যের তথ্য আপডেট' : 'নতুন সদস্য যোগ'} করা হয়েছে: ${newMember.name}`);
 
             if (AppData.getRemoteUrl()) {
-                await AppData.saveToCloud();
+                const res = await AppData.saveToCloud();
+                if (res && res.success === false) alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + res.message);
             }
 
             closeModal();
@@ -1448,7 +1456,8 @@
                 logActivity(`${idValue ? 'প্রজেক্ট আপডেট' : 'নতুন প্রজেক্ট'} করা হয়েছে: ${title}`);
 
                 if (AppData.getRemoteUrl()) {
-                    await AppData.saveToCloud();
+                    const res = await AppData.saveToCloud();
+                    if (res && res.success === false) alert('সতর্কতা: ক্লাউডে সেভ করা ব্যর্থ হয়েছে! ' + res.message);
                 }
 
                 alert('প্রজেক্টের তথ্য সফলভাবে সেভ করা হয়েছে!');
