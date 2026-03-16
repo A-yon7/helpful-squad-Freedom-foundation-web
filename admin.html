@@ -410,6 +410,10 @@
             <div id="donations" class="tab-content hidden transition-all duration-300">
                 <div class="flex justify-between items-center mb-10">
                     <h4 class="text-2xl font-bold">অনুদান রেকর্ড</h4>
+                    <button onclick="openModal('donation')"
+                        class="bg-orange-theme text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-orange-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-plus mr-2"></i> নতুন অনুদান যোগ করুন
+                    </button>
                 </div>
                 <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
                     <table class="w-full text-left">
@@ -417,8 +421,9 @@
                             <tr>
                                 <th class="px-8 py-5 font-bold text-gray-600">দাতার নাম</th>
                                 <th class="px-8 py-5 font-bold text-gray-600">পদ্ধতি</th>
-                                <th class="px-8 py-5 font-bold text-gray-600">পরিমাণ</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">परिমাণ</th>
                                 <th class="px-8 py-5 font-bold text-gray-600">তারিখ</th>
+                                <th class="px-8 py-5 font-bold text-gray-600">অ্যাকশন</th>
                             </tr>
                         </thead>
                         <tbody id="donations-list" class="divide-y divide-gray-50">
@@ -726,6 +731,50 @@
                     <input type="number" id="p-raised"
                         class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
                         required>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-6 py-3 border-2 border-gray-100 rounded-xl font-bold hover:bg-gray-50 transition-all">বাতিল</button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-orange-theme text-white rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">সংরক্ষণ
+                        করুন</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Donation Modal -->
+        <div id="modal-donation" class="modal-box bg-white w-full max-w-md rounded-[2rem] p-10 hidden text-left">
+            <h3 class="text-2xl font-bold mb-6" id="d-modal-title">নতুন অনুদান যোগ করুন</h3>
+            <form id="form-donation" class="space-y-4">
+                <input type="hidden" id="donation-id">
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">দাতার নাম</label>
+                    <input type="text" id="d-name"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required placeholder="যেমন: মামুনুর রশীদ">
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">পদ্ধতি</label>
+                    <select id="d-method"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all">
+                        <option value="বিকাশ">বিকাশ</option>
+                        <option value="নগদ">নগদ</option>
+                        <option value="রকেট">রকেট</option>
+                        <option value="ব্যাংক">ব্যাংক</option>
+                        <option value="অন্যান্য">অন্যান্য</option>
+                    </select>
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">পরিমাণ (৳)</label>
+                    <input type="number" id="d-amount"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        required placeholder="500">
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-bold mb-1">তারিখ</label>
+                    <input type="text" id="d-date"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition-all"
+                        placeholder="যেমন: ২২ ফেব্রুয়ারি, ২০২৬">
                 </div>
                 <div class="flex gap-4 pt-4">
                     <button type="button" onclick="closeModal()"
@@ -1350,15 +1399,99 @@
         // Donations Logic
         function renderDonations() {
             const list = document.getElementById('donations-list');
-            const data = AppData.get('donations');
-            list.innerHTML = data.map(d => `
+            const data = AppData.get('donations') || [];
+
+            // Sort by latest if they have IDs or timestamps, else as is
+            const sortedData = [...data].reverse();
+
+            list.innerHTML = sortedData.map((d, index) => {
+                const uniqueId = d.id || `don_${index}`;
+                return `
                 <tr>
                     <td class="px-8 py-5 font-bold text-gray-800">${d.name}</td>
                     <td class="px-8 py-5 text-gray-500">${d.method}</td>
                     <td class="px-8 py-5 font-bold text-green-600">৳ ${d.amount}</td>
                     <td class="px-8 py-5 text-gray-500">${d.date}</td>
+                    <td class="px-8 py-5">
+                        <button onclick="editDonation('${uniqueId}')" class="text-blue-500 hover:underline font-bold mr-4 text-sm">এডিট</button>
+                        <button onclick="deleteDonation('${uniqueId}')" class="text-red-500 hover:underline font-bold text-sm">ডিলিট</button>
+                    </td>
                 </tr>
-            `).join('');
+            `}).join('');
+        }
+
+        document.getElementById('form-donation')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idValue = document.getElementById('donation-id').value;
+            const name = document.getElementById('d-name').value;
+            const method = document.getElementById('d-method').value;
+            const amount = parseFloat(document.getElementById('d-amount').value) || 0;
+            const date = document.getElementById('d-date').value || new Date().toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            let donations = AppData.get('donations') || [];
+
+            const donationData = {
+                id: idValue || 'don_' + Date.now(),
+                name,
+                method,
+                amount,
+                date
+            };
+
+            if (idValue) {
+                // Edit
+                donations = donations.map(d => (d.id == idValue || (d.id === undefined && `don_${donations.indexOf(d)}` === idValue)) ? donationData : d);
+                logActivity(`অনুদান রেকর্ড আপডেট করা হয়েছে: ${name} (৳${amount})`);
+            } else {
+                // Add
+                donations.push(donationData);
+                logActivity(`নতুন অনুদান যোগ করা হয়েছে: ${name} (৳${amount})`);
+            }
+
+            AppData.set('donations', donations);
+            if (AppData.getFirebaseConfig()) {
+                await AppData.saveToCloud();
+            }
+
+            closeModal();
+            renderDonations();
+            initDashboard();
+        });
+
+        function editDonation(id) {
+            const donations = AppData.get('donations') || [];
+            // Map index-based IDs if needed
+            const d = donations.find((item, idx) => item.id == id || (item.id === undefined && `don_${idx}` === id));
+
+            if (!d) return;
+
+            document.getElementById('donation-id').value = id;
+            document.getElementById('d-name').value = d.name;
+            document.getElementById('d-method').value = d.method;
+            document.getElementById('d-amount').value = d.amount;
+            document.getElementById('d-date').value = d.date;
+
+            document.getElementById('d-modal-title').innerText = 'অনুদান রেকর্ড এডিট করুন';
+            openModal('donation');
+        }
+
+        function deleteDonation(id) {
+            if (confirm('আপনি কি এই অনুদান রেকর্ডটি ডিলিট করতে চান?')) {
+                let donations = AppData.get('donations') || [];
+                const d = donations.find((item, idx) => item.id == id || (item.id === undefined && `don_${idx}` === id));
+
+                donations = donations.filter((item, idx) => item.id != id && (item.id !== undefined || `don_${idx}` !== id));
+
+                AppData.set('donations', donations);
+                logActivity(`অনুদান ডিলিট করা হয়েছে: ${d ? d.name : id}`);
+
+                if (AppData.getFirebaseConfig()) {
+                    AppData.saveToCloud();
+                }
+
+                renderDonations();
+                initDashboard();
+            }
         }
 
         // Projects Logic
@@ -1563,14 +1696,17 @@
             document.getElementById('form-gallery').reset();
             document.getElementById('form-member').reset();
             document.getElementById('form-project').reset();
+            if (document.getElementById('form-donation')) document.getElementById('form-donation').reset();
 
             document.getElementById('gallery-id').value = '';
             document.getElementById('project-id').value = '';
             document.getElementById('member-old-id').value = '';
             document.getElementById('folder-old-id').value = '';
+            if (document.getElementById('donation-id')) document.getElementById('donation-id').value = '';
 
             document.getElementById('m-modal-title').innerText = 'নতুন সদস্য যুক্ত করুন';
             document.getElementById('p-modal-title').innerText = 'প্রজেক্ট তথ্য যোগ করুন';
+            if (document.getElementById('d-modal-title')) document.getElementById('d-modal-title').innerText = 'নতুন অনুদান যোগ করুন';
             document.getElementById('g-preview-area').innerHTML = '';
             document.getElementById('g-preview-area').classList.add('hidden');
             document.getElementById('m-preview-container').classList.add('hidden');
